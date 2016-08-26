@@ -120,8 +120,8 @@ public:
 		}
 		//int msg_total = AZIM_NUM*ELEV_NUM;
 		//printf("AZIM_NUM: %d, ELEV_NUM: %d, total msg is: %d\n",AZIM_NUM, ELEV_NUM, AZIM_ELEV_NUM);
-		int a=AZIM_NUM;
-		int b=ELEV_NUM;
+		//int a=AZIM_NUM;
+		//int b=ELEV_NUM;
 		//printf("AZIM_NUM: %d, ELEV_NUM: %d, total msg is: %d\n",a, b, a*b);
 		//msg_srp_phat.data=srp_phat_fd_p_to_pub;
 		msg_srp_phat.data.assign(srp_phat_fd_p_to_pub,srp_phat_fd_p_to_pub+AZIM_NUM);
@@ -233,15 +233,15 @@ void compute_srp_phat_fd()
 
 		for(int k=0;k<FFT_NUM;k++)
 		{
-			X_1[k] = raw1_fft_r[k] + raw1_fft_i[k]*1i;
-			X_2[k] = raw2_fft_r[k] + raw2_fft_i[k]*1i;
-			X_3[k] = raw3_fft_r[k] + raw3_fft_i[k]*1i;
-			X_4[k] = raw4_fft_r[k] + raw4_fft_i[k]*1i;
+			X_1[k] = {raw1_fft_r[k] , raw1_fft_i[k]};
+			X_2[k] = {raw2_fft_r[k] , raw2_fft_i[k]};
+			X_3[k] = {raw3_fft_r[k] , raw3_fft_i[k]};
+			X_4[k] = {raw4_fft_r[k] , raw4_fft_i[k]};
 
-			X_1[k] = X_1[k]/(abs(X_1[k]));
-			X_2[k] = X_2[k]/(abs(X_2[k]));
-			X_3[k] = X_3[k]/(abs(X_3[k]));
-			X_4[k] = X_4[k]/(abs(X_4[k]));
+			X_1[k] = X_1[k]/double(abs(X_1[k]));
+			X_2[k] = X_2[k]/double(abs(X_2[k]));
+			X_3[k] = X_3[k]/double(abs(X_3[k]));
+			X_4[k] = X_4[k]/double(abs(X_4[k]));
 		}
 
 		//begin = clock();
@@ -264,24 +264,24 @@ void compute_srp_phat_fd()
 				tau[3] = (angle_vector[0]*mic_pos[3*3+0]+angle_vector[1]*mic_pos[3*3+1]+angle_vector[2]*mic_pos[3*3+2])/cs+3*fTauSeq;
 
 				p=0;
-				bool print_p = 1;
+				//bool print_p = 1;
 				for(int k=int((double(LOW_FREQ)/FS)*FFT_NUM);k<int((double(HIGH_FREQ)/FS)*FFT_NUM);k++)
 				{
-					s=0;
+					s={0,0};
 
 					if(bIncludeChannelOne){
-						tmp = 1i*2*M_PI*k/(double(FFT_NUM)/FS)*tau[0];
+						tmp = {0,2*M_PI*k/(double(FFT_NUM)/FS)*tau[0]};
 						s=s+X_1[k]*exp(tmp);
 					}
 
-					tmp = 1i*2*M_PI*k/(double(FFT_NUM)/FS)*tau[1];
+					tmp = {0,2*M_PI*k/(double(FFT_NUM)/FS)*tau[1]};
 					s=s+X_2[k]*exp(tmp);
 					
 
-					tmp = 1i*2*M_PI*k/(double(FFT_NUM)/FS)*tau[2];
+					tmp = {0,2*M_PI*k/(double(FFT_NUM)/FS)*tau[2]};
 					s=s+X_3[k]*exp(tmp);
 
-					tmp = 1i*2*M_PI*k/(double(FFT_NUM)/FS)*tau[3];
+					tmp = {0,2*M_PI*k/(double(FFT_NUM)/FS)*tau[3]};
 					s=s+X_4[k]*exp(tmp);
 
 					p=p+abs(s)*abs(s);

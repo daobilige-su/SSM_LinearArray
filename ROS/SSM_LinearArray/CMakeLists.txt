@@ -50,6 +50,8 @@ ${PROJECT_SOURCE_DIR}/../../Thirdparty/g2o/lib/libg2o.so
 ${PROJECT_SOURCE_DIR}/../../lib/libSSM_LinearArray.so
 )
 
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/bin)
+
 # Node for monocular camera
 rosbuild_add_executable(Mono
 src/ros_mono.cc
@@ -68,3 +70,21 @@ target_link_libraries(RGBD
 ${LIBS}
 )
 
+# Node for PS3 Eye DOA est.
+rosbuild_add_executable(ps3_srp_phat_fd src/ps3_srp_phat_fd.cpp)
+
+target_link_libraries(ps3_srp_phat_fd
+)
+
+# Node for Kinect 360 mic driver
+#rosbuild_add_executable(kinect_driver src/kinect_driver.cpp)
+
+#target_link_libraries(kinect_driver 
+#freenect
+#)
+
+# Node for Kinect 360 DOA est.
+rosbuild_add_executable(kinect_srp_phat_fd src/kinect_srp_phat_fd.cpp)
+
+target_link_libraries(kinect_srp_phat_fd
+)
