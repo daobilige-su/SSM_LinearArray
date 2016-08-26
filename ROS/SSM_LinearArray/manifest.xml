@@ -1,0 +1,19 @@
+<package>
+  <description brief="SSM_LinearArray">
+
+     SSM_LinearArray
+
+  </description>
+  <author>Daobilige Su</author>
+  <license>GPLv3</license>
+  <depend package="roscpp"/>
+  <depend package="tf"/>
+  <depend package="sensor_msgs"/>
+  <depend package="image_transport"/>
+  <depend package="cv_bridge"/>
+
+
+</package>
+
+
+

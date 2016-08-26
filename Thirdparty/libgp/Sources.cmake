@@ -1,0 +1,29 @@
+SET(LIBGP_SRC
+  src/cov.cc
+  src/cov_factory.cc
+  src/cov_noise.cc
+  src/cov_se_iso.cc
+  src/cov_sum.cc
+  src/cov_prod.cc
+  src/gp.cc
+  src/gp_utils.cc
+  src/sampleset.cc
+  src/rprop.cc
+  src/input_dim_filter.cc
+  src/cg.cc
+)
+
+SET(LIBGP_INTERFACES 
+  include/cov.h
+  include/cov_factory.h
+  include/cov_noise.h
+  include/cov_se_iso.h
+  include/cov_sum.h
+  include/cov_prod.h
+  include/gp.h
+  include/gp_utils.h
+  include/sampleset.h
+  include/rprop.h
+  include/input_dim_filter.h
+  include/cg.h
+)
