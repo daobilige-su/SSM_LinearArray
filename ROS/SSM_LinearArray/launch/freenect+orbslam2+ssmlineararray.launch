@@ -10,6 +10,6 @@
     <arg name="sw_registered_processing"        value="false" />
     <arg name="hw_registered_processing"        value="true" />
   </include>
-  <node pkg="SSL_Linear" type="RGBD" name="RGBD" args="$(find SSL_Linear)/Vocabulary/ORBvoc.txt $(find SSL_Linear)/config/kinect_settings.yaml" output="screen"> 
+  <node pkg="SSM_LinearArray" type="RGBD" name="RGBD" args="$(find SSM_LinearArray)/Vocabulary/ORBvoc.txt $(find SSM_LinearArray)/config/kinect_settings.yaml" output="screen"> 
   </node>
 </launch>
