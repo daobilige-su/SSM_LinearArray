@@ -1,4 +1,7 @@
 <launch>
   <node pkg="SSM_LinearArray" type="Mono" name="Mono" args="$(find SSM_LinearArray)/Vocabulary/ORBvoc.txt $(find SSM_LinearArray)/config/ps3eye_settings.yaml" output="screen"> 
   </node>
+  <node name="ps3_srp_phat_fd" pkg="SSM_LinearArray" type="ps3_srp_phat_fd">
+  </node>
+  <node name="ps3_srp_phat_fd_gui" pkg="SSM_LinearArray" type="ps3_srp_phat_fd_gui.py" />
 </launch>

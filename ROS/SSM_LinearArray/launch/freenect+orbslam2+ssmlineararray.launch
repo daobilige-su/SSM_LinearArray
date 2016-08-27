@@ -12,4 +12,8 @@
   </include>
   <node pkg="SSM_LinearArray" type="RGBD" name="RGBD" args="$(find SSM_LinearArray)/Vocabulary/ORBvoc.txt $(find SSM_LinearArray)/config/kinect_settings.yaml" output="screen"> 
   </node>
+  <node name="kinect_driver" pkg="SSM_LinearArray" type="kinect_driver" />
+  <node name="kinect_srp_phat_fd" pkg="SSM_LinearArray" type="kinect_srp_phat_fd">
+  </node>
+  <node name="kinect_srp_phat_fd_gui" pkg="SSM_LinearArray" type="kinect_srp_phat_fd_gui.py" />
 </launch>

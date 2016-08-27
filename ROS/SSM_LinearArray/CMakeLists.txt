@@ -39,6 +39,7 @@ ${PROJECT_SOURCE_DIR}
 ${PROJECT_SOURCE_DIR}/../../
 ${PROJECT_SOURCE_DIR}/../../include
 ${Pangolin_INCLUDE_DIRS}
+${PROJECT_SOURCE_DIR}/include
 )
 
 set(LIBS 
@@ -76,15 +77,15 @@ rosbuild_add_executable(ps3_srp_phat_fd src/ps3_srp_phat_fd.cpp)
 target_link_libraries(ps3_srp_phat_fd
 )
 
-# Node for Kinect 360 mic driver
-#rosbuild_add_executable(kinect_driver src/kinect_driver.cpp)
-
-#target_link_libraries(kinect_driver 
-#freenect
-#)
-
 # Node for Kinect 360 DOA est.
 rosbuild_add_executable(kinect_srp_phat_fd src/kinect_srp_phat_fd.cpp)
 
 target_link_libraries(kinect_srp_phat_fd
+)
+
+# Node for Kinect 360 mic driver
+rosbuild_add_executable(kinect_driver src/kinect_driver.cpp)
+
+target_link_libraries(kinect_driver 
+${PROJECT_SOURCE_DIR}/lib/libfreenect.so
 )
