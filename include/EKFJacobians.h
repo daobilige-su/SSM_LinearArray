@@ -1,3 +1,11 @@
+/**
+* This file is part of the SSM_LinearArray (Sound Sources Mapping
+* using a Linear Microphone Array)
+* developed by Daobilige Su <daobilige DOT su AT student DOT uts DOT edu DOT au>
+*  
+* This file is under the GPLv3 licence. 
+*/
+
 #ifndef EKFJACOBIANS_H
 #define EKFJACOBIANS_H
 
@@ -8,32 +16,17 @@
 
 namespace ORB_SLAM2{
 
-//class Converter;
-
-//inline Eigen::MatrixXd jacobian_linear_to_azim_elev(Eigen::Matrix4d Mx, double axis_angle, double circum_angle){
 inline Eigen::MatrixXd jacobian_linear_to_azim_elev(){
-	//Eigen::MatrixXd quat = Converter::toSE3Quat(Converter::toCvMat(Mx)).toVector();
- 
-	//double x = quat(0,0);
-	//double y = quat(0,1);
-	//double z = quat(0,2);
-	//double qr = quat(6,0);
-	//double qx = quat(3,0);
-	//double qy = quat(4,0);
-	//double qz = quat(5,0);
-
 	Eigen::MatrixXd F(8,3);
 	F(5,0) = 1;
 	F(6,1) = 1;
 	F(7,2) = 1;
 
 	return F;
-
 }
 
 
 inline Eigen::MatrixXd jacobian_ekf_update_3d_linear_hypo(Eigen::Matrix4d Mx, Eigen::MatrixXd lm){
-
 	Eigen::MatrixXd mu = Converter::toSE3Quat(Converter::toCvMat(Mx)).toVector();
 
 	double mu_x = mu(0,0);
@@ -82,7 +75,6 @@ inline Eigen::MatrixXd jacobian_idp_to_euc(Eigen::MatrixXd lm){
      0, 0, 1, 0, (cos(lm_elev)*sin(lm_axis))/lm_idp - (cos(lm_axis)*sin(lm_elev)*sin(lm_circum))/lm_idp, (cos(lm_axis)*sin(lm_elev))/lm_idp - (cos(lm_elev)*sin(lm_axis)*sin(lm_circum))/lm_idp, (cos(lm_elev)*cos(lm_axis)*cos(lm_circum))/lm_idp, -1.0*(sin(lm_elev)*sin(lm_axis))/pow(lm_idp,2) - (cos(lm_elev)*cos(lm_axis)*sin(lm_circum))/pow(lm_idp,2);
 
 	return F;
-
 }
 
 }

@@ -1,6 +1,16 @@
 /**
-* This file is part of ORB-SLAM2.
+* This file is part of the SSM_LinearArray (Sound Sources Mapping
+* using a Linear Microphone Array)
+* developed by Daobilige Su <daobilige DOT su AT student DOT uts DOT edu DOT au>
+*  
+* This file is a modified version of the original file in ORB-SLAM2, 
+* which is under GPLv3 licence. Therefore, this file also inherits 
+* the GPLv3 licence. 
 *
+* The visual SLAM frontend/backend is part of ORB-SLAM2.
+* The copyright of ORB-SLAM2 is described as follows:
+*
+* --
 * Copyright (C) 2014-2016 Raúl Mur-Artal <raulmur at unizar dot es> (University of Zaragoza)
 * For more information see <https://github.com/raulmur/ORB_SLAM2>
 *
@@ -16,13 +26,13 @@
 *
 * You should have received a copy of the GNU General Public License
 * along with ORB-SLAM2. If not, see <http://www.gnu.org/licenses/>.
+* --
 */
 
-
 #include<iostream> 
-#include<algorithm> // TODO
+#include<algorithm> 
 #include<fstream> //used for saving keyframes into a file after the job is finished.
-#include<chrono> // TODO
+#include<chrono> 
 
 #include<ros/ros.h> // necessary ROS header.
 #include <cv_bridge/cv_bridge.h>// for image related operation
@@ -32,7 +42,7 @@
 #include <message_filters/subscriber.h>
 #include <message_filters/time_synchronizer.h>
 #include <message_filters/sync_policies/approximate_time.h>
-// TODO NEW: headers for Float32MultiArray Msg for DOA msgs
+// headers for Float32MultiArray Msg for DOA msgs
 #include "std_msgs/MultiArrayLayout.h"
 #include "std_msgs/MultiArrayDimension.h"
 #include "std_msgs/Float32MultiArray.h"
@@ -85,7 +95,7 @@ int main(int argc, char **argv)
     message_filters::Synchronizer<sync_pol> sync(sync_pol(10), rgb_sub,depth_sub);
     sync.registerCallback(boost::bind(&ImageGrabber::GrabRGBD,&igb,_1,_2));// after synchronization, output two msgs to ImageGrabber::GrabRGBD method.
 	
-	// TODO NEW: DOA msg handler
+	// DOA msg handler
     ros::Subscriber sub = nh.subscribe("/srp_phat_fd_value", 1, &ImageGrabber::PassDOAMsg, &igb);
 
     // during operation, the system loops here.
@@ -132,36 +142,11 @@ void ImageGrabber::GrabRGBD(const sensor_msgs::ImageConstPtr& msgRGB,const senso
 }
 
 void ImageGrabber::PassDOAMsg(const std_msgs::Float32MultiArray::ConstPtr& msgDOA){
-
-	/*
-	// find the max DOA that is larger than a threshold
-    double DOA_data[37], DOA_data_max=0; 
-	int DOA_max_idx = -1;
-    for(int n=0;n<37;n++){
-        DOA_data[n] = msgDOA->data[n];
-		if(DOA_data[n]>DOA_data_max){
-			DOA_max_idx = n;
-			DOA_data_max = DOA_data[n];
-		}
-	}
-
-	// if valid DOA found store it, else empty it.
-	vector<double> vfCurrentDOA;
-    if(DOA_max_idx>=0){
-		vfCurrentDOA.push_back( (M_PI/180)*(5*double(DOA_max_idx-19)) );
-		cout<<"current DOA is: "<<vfCurrentDOA[0]<<endl;
-	}
-	else{
-		vfCurrentDOA.clear();
-		cout<<"current DOA is empty"<<endl;
-	}
-	*/
 	vector<double> vfCurrentDOALik;
 	for(int n=0;n<37;n++){
         vfCurrentDOALik.push_back(msgDOA->data[n]);
 	}
 
 	mpSLAM->SetCurrentDOALik(vfCurrentDOALik);
-    
 }
 

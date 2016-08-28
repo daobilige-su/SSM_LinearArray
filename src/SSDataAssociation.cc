@@ -1,13 +1,18 @@
+/**
+* This file is part of the SSM_LinearArray (Sound Sources Mapping
+* using a Linear Microphone Array)
+* developed by Daobilige Su <daobilige DOT su AT student DOT uts DOT edu DOT au>
+*  
+* This file is under the GPLv3 licence. 
+*/
+
 #include "SSDataAssociation.h"
 
 namespace ORB_SLAM2
 {
 
 // constructor
-
 SSDataAssociation::SSDataAssociation(const std::string &strSettingPath) : mbSoundSourceTrackFlag(false), mnCurrentSSID(0), mnCurrentSSIDValidNum(0){
-	//mfDOALikMin = 1300;//kinect
-	//mfDOALikMin = 2300;//ps3-eye
 
 	msSettingPath = strSettingPath;
 	cv::FileStorage fSettings(msSettingPath, cv::FileStorage::READ);
@@ -39,11 +44,7 @@ bool SSDataAssociation::ComputeSSID(const std::vector<double> vfCurrentDOALik){
 		std::cout<<"current DOA is empty"<<std::endl;
 	}
 
-
-
-
 	// (2) Assign mvfPreviousDOA and mvfCurrentDOA
-	
 	// previous 10 DOAs
 	if(mvfPreviousDOA.size()<10){
 		if(mvfCurrentDOA.size()==0){
@@ -52,10 +53,8 @@ bool SSDataAssociation::ComputeSSID(const std::vector<double> vfCurrentDOALik){
 		else{
 			mvfPreviousDOA.push_back(mvfCurrentDOA[0]);
 		}
-		//std::cout<<"pre 10"<<std::endl;
 	}
 	else{
-		//std::cout<<"after 10"<<std::endl;
 		for(int n=0;n<9;n++){
 			mvfPreviousDOA[n] = mvfPreviousDOA[n+1];
 		}
@@ -96,12 +95,9 @@ bool SSDataAssociation::ComputeSSID(const std::vector<double> vfCurrentDOALik){
 				
 			}
 		}
-		//std::cout<<"consistant_num: "<<consistant_num<<std::endl;
 		if(consistant_num>=consistant_num_min)
 			consistant_flag = 1;
 	}
-
-	//std::cout<<"consistant_flag: "<<consistant_flag<<std::endl;
 	if(consistant_flag){
 		if(mnCurrentSSIDValidNum==0){
 			if(DOA_data_max>mfDOALikMin*1.2){

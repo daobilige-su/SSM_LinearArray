@@ -1,3 +1,11 @@
+/**
+* This file is part of the SSM_LinearArray (Sound Sources Mapping
+* using a Linear Microphone Array)
+* developed by Daobilige Su <daobilige DOT su AT student DOT uts DOT edu DOT au>
+*  
+* This file is under the GPLv3 licence. 
+*/
+
 #include "DOA_handler.h"
 
 namespace ORB_SLAM2
@@ -115,119 +123,11 @@ void DOA_handler::SetTracker(Tracking *pTracker)
     mpTracker=pTracker;
 }
 
-/*
-// communication window, the ROS package code will use this function to set current DOA to this class
-void DOA_handler::SetCurrentDOA(const std::vector<double> vfCurrentDOA){
-	// previous 10 DOAs
-	if(mvfPreviousDOA.size()<10){
-		if(mvfCurrentDOA.size()==0){
-			mvfPreviousDOA.push_back(-1000);
-		}
-		else{
-			mvfPreviousDOA.push_back(mvfCurrentDOA[0]);
-		}
-		//std::cout<<"pre 10"<<std::endl;
-	}
-	else{
-		//std::cout<<"after 10"<<std::endl;
-		for(int n=0;n<9;n++){
-			mvfPreviousDOA[n] = mvfPreviousDOA[n+1];
-		}
-		if(mvfCurrentDOA.size()>0){
-			mvfPreviousDOA[9] = mvfCurrentDOA[0];
-		}
-		else{
-			mvfPreviousDOA[9] = -1000.0;
-		}
-	}
-	//current DOA
-	mvfCurrentDOA = vfCurrentDOA;
-}
-*/
-
 // communication window, the ROS package code will use this function to set current DOA to this class
 void DOA_handler::SetCurrentDOALik(const std::vector<double> vfCurrentDOALik){
 	//current DOA Likelihood
 	mvfCurrentDOALik = vfCurrentDOALik;
 }
-
-/*
-bool DOA_handler::AssociateData(){
-	double rad_diff = 0;
-	double rad_diff_max = double(20.0*(M_PI/180.0));
-	int consistant_num = 0;
-	int consistant_num_min = 6;
-
-	bool consistant_flag = 0;
-
-	if(mvfCurrentDOA.size()>0){
-		for(vector<double>::const_iterator it=mvfPreviousDOA.begin(), itEnd=mvfPreviousDOA.end(); it!=itEnd; it++){
-
-			if(*it==(-1000.0)){
-				continue;
-			}
-			else{
-				rad_diff=(*it-mvfCurrentDOA[0]);
-				if(rad_diff>M_PI)
-					rad_diff = rad_diff-2*M_PI;
-				if(rad_diff<-M_PI)
-					rad_diff = rad_diff+2*M_PI;
-
-				if(rad_diff<=rad_diff_max)
-					++consistant_num;
-				
-			}
-		}
-		//std::cout<<"consistant_num: "<<consistant_num<<std::endl;
-		if(consistant_num>=consistant_num_min)
-			consistant_flag = 1;
-	}
-
-	//std::cout<<"consistant_flag: "<<consistant_flag<<std::endl;
-	if(consistant_flag){
-		if(mnCurrentSSIDValidNum==0){
-			mnCurrentSSID += 1;
-			mnCurrentSSIDValidNum = 10;
-			mbSoundSourceTrackFlag = true;
-		}
-		else{
-			mnCurrentSSIDValidNum = 10;
-		}
-	}
-	else{
-		if(mnCurrentSSIDValidNum>0){
-			mnCurrentSSIDValidNum -= 1;
-			if(mnCurrentSSIDValidNum==0){
-				mbSoundSourceTrackFlag = false;
-			}
-		}
-	}
-
-	//std::cout<<"mbSoundSourceTrackFlag: "<<mbSoundSourceTrackFlag<<std::endl;
-
-	std::vector<double> previousDOAToAssign = mfCurrentDOAToAssign;
-	std::vector<double> previousDOAStdToAssign = mfCurrentDOAStdToAssign;
-	mfCurrentDOAToAssign.clear();
-	mfCurrentDOAStdToAssign.clear();
-	if(mnCurrentSSIDValidNum>0){
-		if(consistant_flag){
-			mfCurrentDOAToAssign.push_back(ComputeDOAf(mvfCurrentDOA[0]));
-			mfCurrentDOAStdToAssign.push_back(ComputeDOAStd(mvfCurrentDOA[0]));
-		}
-		else{
-			if(mbSoundSourceTrackFlag){
-				mfCurrentDOAToAssign = previousDOAToAssign;
-				mfCurrentDOAStdToAssign = previousDOAStdToAssign;
-			}
-		}
-		if(mbSoundSourceTrackFlag){
-			std::cout<<"SSID: "<<mnCurrentSSID<<", Current DOA: "<<mfCurrentDOAToAssign[0]<<std::endl;
-		}
-	}
-
-	return mbSoundSourceTrackFlag;
-}
-*/
 
 void DOA_handler::setCurrentCameraFrame(const cv::Mat &Tcw)
 {
@@ -251,7 +151,6 @@ void DOA_handler::setCurrentCameraFrame(const cv::Mat &Tcw)
 
 double DOA_handler::ComputeDOAStd(double axis_angle){
 	double axis_angle_array[]={axis_angle};
-	//double axis_angle_f_from_GP = mpGP->f(axis_angle_array);
 	double axis_angle_std_from_GP = sqrt(mpGP->var(axis_angle_array));
 	return axis_angle_std_from_GP;
 }

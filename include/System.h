@@ -1,6 +1,16 @@
 /**
-* This file is part of ORB-SLAM2.
+* This file is part of the SSM_LinearArray (Sound Sources Mapping
+* using a Linear Microphone Array)
+* developed by Daobilige Su <daobilige DOT su AT student DOT uts DOT edu DOT au>
+*  
+* This file is a modified version of the original file in ORB-SLAM2, 
+* which is under GPLv3 licence. Therefore, this file also inherits 
+* the GPLv3 licence. 
 *
+* The visual SLAM frontend/backend is part of ORB-SLAM2.
+* The copyright of ORB-SLAM2 is described as follows:
+*
+* --
 * Copyright (C) 2014-2016 Raúl Mur-Artal <raulmur at unizar dot es> (University of Zaragoza)
 * For more information see <https://github.com/raulmur/ORB_SLAM2>
 *
@@ -16,6 +26,7 @@
 *
 * You should have received a copy of the GNU General Public License
 * along with ORB-SLAM2. If not, see <http://www.gnu.org/licenses/>.
+* --
 */
 
 
@@ -35,7 +46,7 @@
 #include "KeyFrameDatabase.h"
 #include "ORBVocabulary.h"
 #include "Viewer.h"
-// TODO NEW: DOA_handler
+
 #include "DOA_handler.h"
 
 namespace ORB_SLAM2
@@ -47,7 +58,7 @@ class Map;
 class Tracking;
 class LocalMapping;
 class LoopClosing;
-// TODO NEW: DOA_handler
+
 class DOA_handler;
 class MapDrawer;
 
@@ -115,8 +126,6 @@ public:
     // SaveMap(const string &filename);
     // LoadMap(const string &filename);
 
-	// TODO NEW: SetCurrentDOA()
-	//std::vector<double> mvfCurrentDOA;
 	void SetCurrentDOALik(const std::vector<double> vfCurrentDOALik);
 
 private:
@@ -145,7 +154,7 @@ private:
     // a pose graph optimization and full bundle adjustment (in a new thread) afterwards.
     LoopClosing* mpLoopCloser;
 
-	// TODO NEW: DOA_handler 
+	// DOA_handler 
 	DOA_handler* mpDOAHandler;
 
     // The viewer draws the map and the current camera pose. It uses Pangolin.
@@ -159,8 +168,6 @@ private:
     std::thread* mptLocalMapping;
     std::thread* mptLoopClosing;
     std::thread* mptViewer;
-	// TODO NEW: DOA_handler thread
-	// std::thread* mptDOAHandler;
 
     // Reset flag
     std::mutex mMutexReset;

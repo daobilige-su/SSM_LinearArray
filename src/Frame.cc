@@ -1,6 +1,16 @@
 /**
-* This file is part of ORB-SLAM2.
+* This file is part of the SSM_LinearArray (Sound Sources Mapping
+* using a Linear Microphone Array)
+* developed by Daobilige Su <daobilige DOT su AT student DOT uts DOT edu DOT au>
+*  
+* This file is a modified version of the original file in ORB-SLAM2, 
+* which is under GPLv3 licence. Therefore, this file also inherits 
+* the GPLv3 licence. 
 *
+* The visual SLAM frontend/backend is part of ORB-SLAM2.
+* The copyright of ORB-SLAM2 is described as follows:
+*
+* --
 * Copyright (C) 2014-2016 Raúl Mur-Artal <raulmur at unizar dot es> (University of Zaragoza)
 * For more information see <https://github.com/raulmur/ORB_SLAM2>
 *
@@ -16,6 +26,7 @@
 *
 * You should have received a copy of the GNU General Public License
 * along with ORB-SLAM2. If not, see <http://www.gnu.org/licenses/>.
+* --
 */
 
 #include "Frame.h"
@@ -30,7 +41,6 @@ long unsigned int Frame::nNextId=0;
 bool Frame::mbInitialComputations=true;
 float Frame::cx, Frame::cy, Frame::fx, Frame::fy, Frame::invfx, Frame::invfy;
 
-//TODO NEW
 float Frame::mPCcx, Frame::mPCcy, Frame::mPCinvfx, Frame::mPCinvfy;
 
 float Frame::mnMinX, Frame::mnMinY, Frame::mnMaxX, Frame::mnMaxY;
@@ -119,7 +129,6 @@ Frame::Frame(const cv::Mat &imLeft, const cv::Mat &imRight, const double &timeSt
 
     AssignFeaturesToGrid();
 
-	//TODO NEW
 	mPCinvfx = invfx;
     mPCinvfy = invfy;
 	mPCcx = cx;
@@ -179,8 +188,6 @@ Frame::Frame(const cv::Mat &imGray, const cv::Mat &imDepth, const double &timeSt
 
     AssignFeaturesToGrid();
 
-	//TODO NEW
-	//ComputePointCloud(imGray, imDepth);
 	imGray.copyTo(mPCImRGBRaw);
 	imDepth.copyTo(mPCImDepth);
 	mPCinvfx = invfx;
@@ -245,7 +252,6 @@ Frame::Frame(const cv::Mat &imGray, const double &timeStamp, ORBextractor* extra
 
     AssignFeaturesToGrid();
 
-	//TODO NEW
 	mPCinvfx = invfx;
     mPCinvfy = invfy;
 	mPCcx = cx;
@@ -701,49 +707,5 @@ cv::Mat Frame::UnprojectStereo(const int &i)
     else
         return cv::Mat();
 }
-
-/*
-void Frame::ComputePointCloud(const cv::Mat &imRGB, const cv::Mat &imDepth)
-{
-
-	//std::cout<<"imRGB.channels(): "<<imRGB.channels()<<std::endl;
-	//std::cout<<"imRGB is : "<<imRGB.rows<<"x"<<imRGB.cols<<std::endl;
-
-	cv::Mat imRGBLocal;
-	imRGB.copyTo(imRGBLocal);
-	
-	cvtColor(imRGBLocal,imRGBLocal,CV_BayerGB2RGB);
-
-	for(int uIndex=0; uIndex<imDepth.cols; uIndex++){
-		for(int vIndex=0; vIndex<imDepth.rows; vIndex++){
-		
-			const float v = float(vIndex);
-			const float u = float(uIndex);
-
-			const float z = imDepth.at<float>(int(v),int(u));
-
-			const float x = (u-cx)*z*invfx;
-			const float y = (v-cy)*z*invfy;
-
-			if(z>0 && z<0.4){
-
-				// Undistort corners
-				//mat=mat.reshape(2);
-				//cv::undistortPoints(mat,mat,mK,mDistCoef,cv::Mat(),mK);
-				//mat=mat.reshape(1);
-
-				
-	
-				cv::Mat x3Dc = (cv::Mat_<float>(3,1) << x, y, z);
-
-				Eigen::Matrix<double,6,1> pPointCloud;
-				//pPointCloud << x3DcWorld.at<double>(0,0), x3DcWorld.at<double>(1,0), x3DcWorld.at<double>(2,0), imGray.at<double>(int(v),int(u));
-				pPointCloud << x3Dc.at<float>(0,0), x3Dc.at<float>(1,0), x3Dc.at<float>(2,0), imRGBLocal.at<cv::Vec3b>(int(v),int(u))[0], imRGBLocal.at<cv::Vec3b>(int(v),int(u))[1], imRGBLocal.at<cv::Vec3b>(int(v),int(u))[2];
-				mpPointCloud.push_back(pPointCloud);
-			}
-		}
-	}
-}
-*/
 
 } //namespace ORB_SLAM

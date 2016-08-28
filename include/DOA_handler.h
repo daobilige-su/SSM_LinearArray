@@ -1,3 +1,12 @@
+/**
+* This file is part of the SSM_LinearArray (Sound Sources Mapping
+* using a Linear Microphone Array)
+* developed by Daobilige Su <daobilige DOT su AT student DOT uts DOT edu DOT au>
+*  
+* This file is under the GPLv3 licence. 
+*/
+
+
 #ifndef DOA_HANDLER_H
 #define DOA_HANDLER_H
 
@@ -28,11 +37,8 @@ public:
 	DOA_handler(const std::string &strSettingPath);
 
     // handle new DOA messages (main loop of the thread).
-    //void Run();
 	void SetTracker(Tracking *pTracker);
 
-	// SetCurrentDOA()
-	//void SetCurrentDOA(const std::vector<double> vfCurrentDOA);
 	void SetCurrentDOALik(const std::vector<double> vfCurrentDOALik);
 
 	void HandleNewDOAmsg();
@@ -44,18 +50,13 @@ public:
 	double ComputeDOAStd(double axis_angle);
 	double ComputeDOAf(double axis_angle);
 public:
-    //std::vector<double> mfCurrentDOA;
 	int mnCurrentSSID;
-	//int mnCurrentSSIDValidNum;
 	std::vector<double> mfCurrentDOAToAssign;
 	std::vector<double> mfCurrentDOAStdToAssign;
-
 	std::vector<MultiHypoSSL> mvpMultiHypoSSL;
 	Eigen::MatrixXd mCurrentCameraFrame;// Tcw
 	libgp::GaussianProcess* mpGP;
-
 	std::string msSettingPath;
-
 	SSDataAssociation* mpSSDataAssociation;
 
 private:
@@ -63,15 +64,10 @@ private:
     // It also decides when to insert a new keyframe, create some new MapPoints and
     // performs relocalization if tracking fails.
     Tracking* mpTracker;
-    //double mfDOAThreshold;
-	//std::vector<double> mvfCurrentDOA;
+
 	std::vector<double> mvfCurrentDOALik;
-	//std::vector<double> mvfPreviousDOA;
-	//bool mbSoundSourceTrackFlag;
-
-
 };
 
 }// namespace ORB_SLAM
 
-#endif // SYSTEM_H
+#endif

@@ -1,6 +1,16 @@
 /**
-* This file is part of ORB-SLAM2.
+* This file is part of the SSM_LinearArray (Sound Sources Mapping
+* using a Linear Microphone Array)
+* developed by Daobilige Su <daobilige DOT su AT student DOT uts DOT edu DOT au>
+*  
+* This file is a modified version of the original file in ORB-SLAM2, 
+* which is under GPLv3 licence. Therefore, this file also inherits 
+* the GPLv3 licence. 
 *
+* The visual SLAM frontend/backend is part of ORB-SLAM2.
+* The copyright of ORB-SLAM2 is described as follows:
+*
+* --
 * Copyright (C) 2014-2016 Raúl Mur-Artal <raulmur at unizar dot es> (University of Zaragoza)
 * For more information see <https://github.com/raulmur/ORB_SLAM2>
 *
@@ -16,6 +26,7 @@
 *
 * You should have received a copy of the GNU General Public License
 * along with ORB-SLAM2. If not, see <http://www.gnu.org/licenses/>.
+* --
 */
 
 #include "LocalMapping.h"
@@ -99,7 +110,6 @@ void LocalMapping::Run()
 		    // (5) if flat is set, Optimize again without the outliers
 		    // (6) Check for inliers/outliers edges (Keyframes to Mappoints), and delete outlier edges (Keyframes - Mappoints observations links)
 		    // (7) Recover optimized data
-					// TODO NEW
                     Optimizer::LocalBundleAdjustment(mpCurrentKeyFrame,&mbAbortBA, mpMap, mpDOAHandler);
 
                 // (6) Check redundant local Keyframes
@@ -811,7 +821,7 @@ bool LocalMapping::isFinished()
     return mbFinished;
 }
 
-// TODO NEW: set DOA_handler
+// set DOA_handler
 void LocalMapping::SetDOAHandler(DOA_handler *pDOAHandler)
 {
     mpDOAHandler=pDOAHandler;

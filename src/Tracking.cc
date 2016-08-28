@@ -1,6 +1,16 @@
 /**
-* This file is part of ORB-SLAM2.
+* This file is part of the SSM_LinearArray (Sound Sources Mapping
+* using a Linear Microphone Array)
+* developed by Daobilige Su <daobilige DOT su AT student DOT uts DOT edu DOT au>
+*  
+* This file is a modified version of the original file in ORB-SLAM2, 
+* which is under GPLv3 licence. Therefore, this file also inherits 
+* the GPLv3 licence. 
 *
+* The visual SLAM frontend/backend is part of ORB-SLAM2.
+* The copyright of ORB-SLAM2 is described as follows:
+*
+* --
 * Copyright (C) 2014-2016 Raúl Mur-Artal <raulmur at unizar dot es> (University of Zaragoza)
 * For more information see <https://github.com/raulmur/ORB_SLAM2>
 *
@@ -16,6 +26,7 @@
 *
 * You should have received a copy of the GNU General Public License
 * along with ORB-SLAM2. If not, see <http://www.gnu.org/licenses/>.
+* --
 */
 
 
@@ -461,7 +472,6 @@ void Tracking::Track()
                 mVelocity = cv::Mat();
 
             mpMapDrawer->SetCurrentCameraPose(mCurrentFrame.mTcw);
-			// TODO
 			mpDOAHandler->setCurrentCameraFrame(mCurrentFrame.mTcw);
 
             // Clean temporal point matches, (if mappoints being observed time is < 1, delete them)
@@ -595,7 +605,6 @@ void Tracking::StereoInitialization()
         mpMap->mvpKeyFrameOrigins.push_back(pKFini);
 
         mpMapDrawer->SetCurrentCameraPose(mCurrentFrame.mTcw); // return the current camera pose to MapDrawer
-		// TODO
 		mpDOAHandler->setCurrentCameraFrame(mCurrentFrame.mTcw);
 
         mState=OK; // show the state is OK(tracking in process)
@@ -772,7 +781,6 @@ void Tracking::CreateInitialMapMonocular()
     mpMap->SetReferenceMapPoints(mvpLocalMapPoints);
 
     mpMapDrawer->SetCurrentCameraPose(pKFcur->GetPose());
-	// TODO
 	mpDOAHandler->setCurrentCameraFrame(mCurrentFrame.mTcw);
 
     mpMap->mvpKeyFrameOrigins.push_back(pKFini);
@@ -809,7 +817,7 @@ bool Tracking::TrackReferenceKeyFrame()
     mCurrentFrame.ComputeBoW();
 
     // We perform first an ORB matching with the reference keyframe
-    // "If enough matches are found we setup a PnP solver", TODO, but I think it is a misleading comments, there is no PnP solver here,
+    // "If enough matches are found we setup a PnP solver", but I think it is a misleading comments, there is no PnP solver here,
     // only in the relocalization, they use PnP solver, as can be seen later in this file. The PnP solver is used only over there.
     // 
     ORBmatcher matcher(0.7,true);
@@ -991,7 +999,7 @@ bool Tracking::TrackLocalMap()
 
     UpdateLocalMap();// updating local keyframes (keyframes that share same mappoints and their neighbouring keyframes) and mappoints (mappoints that are included local keyframes).
 
-    SearchLocalPoints(); // among local mappoints that are included in the frustum of the current frame, reproject them into the current frame and search for ORB feature correspondance again (current frame ORB features and Mappoint correspondance the 2nd time). !!! TODO the new ORB features that are newly observed in the current frame have not been included in the mappoint until the next frame after this current frame is processed. At that time, tracking will use  Tracking::UpdateLastFrame() to add newly observed mappoints. However, these ORB features added by UpdateLastFrame() from non Keyframes are defined as temperal points and cleared at the end of next iteration.
+    SearchLocalPoints(); // among local mappoints that are included in the frustum of the current frame, reproject them into the current frame and search for ORB feature correspondance again (current frame ORB features and Mappoint correspondance the 2nd time). the new ORB features that are newly observed in the current frame have not been included in the mappoint until the next frame after this current frame is processed. At that time, tracking will use  Tracking::UpdateLastFrame() to add newly observed mappoints. However, these ORB features added by UpdateLastFrame() from non Keyframes are defined as temperal points and cleared at the end of next iteration.
 
     // Optimize Pose
     Optimizer::PoseOptimization(&mCurrentFrame);
@@ -1084,7 +1092,7 @@ bool Tracking::NeedNewKeyFrame()
     }
     else
     {
-        // There are no visual odometry matches in the monocular case, TODO: I think it should be nMap=0;nTotal=1;so that the
+        // There are no visual odometry matches in the monocular case, I think it should be nMap=0;nTotal=1;so that the
         // ratio = 0. But does not matter since in monocular case, this is not used. Maybe just giving them a value so that the
         // division operation does not provide error?
         nMap=1;
@@ -1148,7 +1156,6 @@ void Tracking::CreateNewKeyFrame()
 
     KeyFrame* pKF = new KeyFrame(mCurrentFrame,mpMap,mpKeyFrameDB);
 
-	// TODO NEW
 	pKF->SetCurrentDOA(mpDOAHandler->mfCurrentDOAToAssign, mpDOAHandler->mfCurrentDOAStdToAssign, mpDOAHandler->mnCurrentSSID);
 
     mpReferenceKF = pKF;
@@ -1679,7 +1686,7 @@ void Tracking::InformOnlyTracking(const bool &flag)
     mbOnlyTracking = flag;
 }
 
-// TODO NEW: set DOA_handler
+// set DOA_handler
 void Tracking::SetDOAHandler(DOA_handler *pDOAHandler)
 {
     mpDOAHandler=pDOAHandler;

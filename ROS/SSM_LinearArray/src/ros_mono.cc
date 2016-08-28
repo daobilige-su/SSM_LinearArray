@@ -1,6 +1,16 @@
 /**
-* This file is part of ORB-SLAM2.
+* This file is part of the SSM_LinearArray (Sound Sources Mapping
+* using a Linear Microphone Array)
+* developed by Daobilige Su <daobilige DOT su AT student DOT uts DOT edu DOT au>
+*  
+* This file is a modified version of the original file in ORB-SLAM2, 
+* which is under GPLv3 licence. Therefore, this file also inherits 
+* the GPLv3 licence. 
 *
+* The visual SLAM frontend/backend is part of ORB-SLAM2.
+* The copyright of ORB-SLAM2 is described as follows:
+*
+* --
 * Copyright (C) 2014-2016 Raúl Mur-Artal <raulmur at unizar dot es> (University of Zaragoza)
 * For more information see <https://github.com/raulmur/ORB_SLAM2>
 *
@@ -16,8 +26,8 @@
 *
 * You should have received a copy of the GNU General Public License
 * along with ORB-SLAM2. If not, see <http://www.gnu.org/licenses/>.
+* --
 */
-
 
 #include<iostream>
 #include<algorithm>
@@ -26,7 +36,7 @@
 
 #include<ros/ros.h>
 #include <cv_bridge/cv_bridge.h>
-// TODO NEW: headers for Float32MultiArray Msg for DOA msgs
+
 #include "std_msgs/MultiArrayLayout.h"
 #include "std_msgs/MultiArrayDimension.h"
 #include "std_msgs/Float32MultiArray.h"
@@ -40,15 +50,13 @@ using namespace std;
 class ImageGrabber
 {
 public:
-    ImageGrabber(ORB_SLAM2::System* pSLAM):mpSLAM(pSLAM),mfDOAThreshold(2300){}
+    ImageGrabber(ORB_SLAM2::System* pSLAM):mpSLAM(pSLAM){}
 
     void GrabImage(const sensor_msgs::ImageConstPtr& msg);
 
 	void PassDOAMsg(const std_msgs::Float32MultiArray::ConstPtr& msgDOA);
 
     ORB_SLAM2::System* mpSLAM;
-
-	double mfDOAThreshold;
 };
 
 int main(int argc, char **argv)
@@ -71,7 +79,7 @@ int main(int argc, char **argv)
     ros::NodeHandle nodeHandler;
     ros::Subscriber sub = nodeHandler.subscribe("/camera/image_raw", 1, &ImageGrabber::GrabImage,&igb);
 
-	// TODO NEW: DOA msg handler
+	// DOA msg handler
     ros::Subscriber DOA_sub = nodeHandler.subscribe("/srp_phat_fd_value", 1, &ImageGrabber::PassDOAMsg, &igb);
 
     ros::spin();
@@ -105,37 +113,6 @@ void ImageGrabber::GrabImage(const sensor_msgs::ImageConstPtr& msg)
 }
 
 void ImageGrabber::PassDOAMsg(const std_msgs::Float32MultiArray::ConstPtr& msgDOA){
-	/*
-	//cout<<"DOA msg received"<<endl;
-
-	// find the max DOA that is larger than a threshold
-    double DOA_data[37], DOA_data_max=0; 
-	int DOA_max_idx = -1;
-    for(int n=0;n<37;n++){
-		if(n==0){
-			DOA_data_max = mfDOAThreshold;
-			//DOA_max_idx = 0;
-		}
-        DOA_data[n] = msgDOA->data[n];
-		if(DOA_data[n]>DOA_data_max){
-			DOA_max_idx = n;
-			DOA_data_max = DOA_data[n];
-		}
-	}
-
-	// if valid DOA found store it, else empty it.
-	vector<double> vfCurrentDOA;
-    if(DOA_max_idx>=0){
-		vfCurrentDOA.push_back( (M_PI/180)*(5*double(DOA_max_idx-19)) );
-		cout<<"current DOA is: "<<vfCurrentDOA[0]<<endl;
-	}
-	else{
-		vfCurrentDOA.clear();
-		cout<<"current DOA is empty"<<endl;
-	}
-
-	mpSLAM->SetCurrentDOA(vfCurrentDOA);
-	*/
 
 	vector<double> vfCurrentDOALik;
 	for(int n=0;n<37;n++){

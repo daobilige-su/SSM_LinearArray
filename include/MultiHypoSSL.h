@@ -1,3 +1,12 @@
+/**
+* This file is part of the SSM_LinearArray (Sound Sources Mapping
+* using a Linear Microphone Array)
+* developed by Daobilige Su <daobilige DOT su AT student DOT uts DOT edu DOT au>
+*  
+* This file is under the GPLv3 licence. 
+*/
+
+
 #ifndef MULTIHYPOSSL_H
 #define MULTIHYPOSSL_H
 
@@ -14,9 +23,7 @@ namespace ORB_SLAM2
 
 class MultiHypoSSL
 {
-
 public:
-
 	MultiHypoSSL();
 	MultiHypoSSL(const std::string &strSettingPath);
 	bool MultiHypoInitialize(Eigen::MatrixXd mCurrentCameraFrame, double axis_angle, double axis_angle_std);
@@ -30,9 +37,6 @@ public:
 	std::vector<SoundSource> mvpSSLHypos;
 
 	std::string msSettingPath;
-private:
-	
-
 };
 
 }

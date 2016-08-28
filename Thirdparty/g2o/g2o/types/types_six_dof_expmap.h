@@ -1,3 +1,11 @@
+/* This file is part of the SSM_LinearArray (Sound Sources Mapping
+* using a Linear Microphone Array)
+* developed by Daobilige Su <daobilige DOT su AT student DOT uts DOT edu DOT au>
+*
+* This file is a modified version of the original file in g2o.
+* The copy right of g2o is shown below. 
+*/
+
 // g2o - General Graph Optimization
 // Copyright (C) 2011 H. Strasdat
 // All rights reserved.
@@ -41,7 +49,7 @@
 #include "se3quat.h"
 #include "types_sba.h"
 #include <Eigen/Geometry>
-//TODO NEW
+
 #include "vertex_pointxyz.h"
 #include "../stuff/misc.h" // for normalize_theta() function
 
@@ -204,7 +212,6 @@ public:
   double fx, fy, cx, cy, bf;
 };
 
-//TODO NEW
 class  EdgeSE3ExpmapPointXYZLinear: public  BaseBinaryEdge<1, Matrix<double,1,1>, VertexSE3Expmap, VertexPointXYZ>{
 public:
   EIGEN_MAKE_ALIGNED_OPERATOR_NEW
@@ -216,32 +223,24 @@ public:
   bool write(std::ostream& os) const;
 
   void computeError()  {
-	//std::cout<<"E here1?"<<std::endl;
     const VertexSE3Expmap* v1 = static_cast<const VertexSE3Expmap*>(_vertices[0]);
     const VertexPointXYZ* v2 = static_cast<const VertexPointXYZ*>(_vertices[1]);
 
 	MatrixXd mCameraPoseInv = (v1->estimate()).to_homogeneous_matrix();
-	//std::cout<<"mCameraPoseInv = "<<mCameraPoseInv<<std::endl;
 	MatrixXd mCameraPose = mCameraPoseInv.inverse();
-	//std::cout<<"mCameraPose = "<<mCameraPose<<std::endl;
 	MatrixXd mCameraPoseSSLFrame = ORBSLAM2CameraFrameToSSLLinearFrame(mCameraPose);	
-	//MatrixXd mCameraPoseSSLFrame = mCameraPose;
 	
 	MatrixXd mPoint = v2->estimate();
-	//std::cout<<"mPoint = "<<mPoint<<std::endl;
 	MatrixXd mPointHom(4,1);
 	mPointHom << mPoint(0,0),mPoint(1,0),mPoint(2,0),1;
-	//std::cout<<"mPointHom = "<<mPointHom<<std::endl;
 
 	MatrixXd point3d_local_coord_hom = mCameraPoseSSLFrame.inverse() * mPointHom;
 	Vector3d point3d_local_coord;
 	point3d_local_coord<<point3d_local_coord_hom(0,0),point3d_local_coord_hom(1,0),point3d_local_coord_hom(2,0);
-	//std::cout<<"mPointHom Local = "<<point3d_local_coord<<std::endl;
 
     double angle = atan2(point3d_local_coord[1], sqrt(pow(point3d_local_coord[0],2) + pow(point3d_local_coord[2],2)) );
 
     _error(0,0) = normalize_theta(_measurement(0,0) - angle );
-	//std::cout<<"E here2?"<<std::endl;
   }
 
   void setMeasurement(const Matrix<double,1,1>& m){

@@ -1,6 +1,16 @@
 /**
-* This file is part of ORB-SLAM2.
+* This file is part of the SSM_LinearArray (Sound Sources Mapping
+* using a Linear Microphone Array)
+* developed by Daobilige Su <daobilige DOT su AT student DOT uts DOT edu DOT au>
+*  
+* This file is a modified version of the original file in ORB-SLAM2, 
+* which is under GPLv3 licence. Therefore, this file also inherits 
+* the GPLv3 licence. 
 *
+* The visual SLAM frontend/backend is part of ORB-SLAM2.
+* The copyright of ORB-SLAM2 is described as follows:
+*
+* --
 * Copyright (C) 2014-2016 Raúl Mur-Artal <raulmur at unizar dot es> (University of Zaragoza)
 * For more information see <https://github.com/raulmur/ORB_SLAM2>
 *
@@ -16,8 +26,8 @@
 *
 * You should have received a copy of the GNU General Public License
 * along with ORB-SLAM2. If not, see <http://www.gnu.org/licenses/>.
+* --
 */
-
 
 
 #include "System.h"
@@ -94,7 +104,7 @@ System::System(const string &strVocFile, const string &strSettingsFile, const eS
     mpLoopCloser = new LoopClosing(mpMap, mpKeyFrameDatabase, mpVocabulary, mSensor!=MONOCULAR);
     mptLoopClosing = new thread(&ORB_SLAM2::LoopClosing::Run, mpLoopCloser);
 
-	// TODO NEW: Initialize the DOA handler thread and launch
+	// Initialize the DOA handler thread and launch
 	mpDOAHandler = new DOA_handler(strSettingsFile);
 	//mptDOAHandler = new thread(&ORB_SLAM2::DOA_handler::Run,mpDOAHandler);
 
@@ -115,7 +125,7 @@ System::System(const string &strVocFile, const string &strSettingsFile, const eS
     mpLoopCloser->SetTracker(mpTracker);
     mpLoopCloser->SetLocalMapper(mpLocalMapper);
 
-    // TODO NEW: Set pointers between Tracking and DOA handler 
+    // Set pointers between Tracking and DOA handler 
     mpTracker->SetDOAHandler(mpDOAHandler);
 	mpDOAHandler->SetTracker(mpTracker);
 	mpMapDrawer->SetDOAHandler(mpDOAHandler);
@@ -433,9 +443,7 @@ void System::SaveTrajectoryKITTI(const string &filename)
     cout << endl << "trajectory saved!" << endl;
 }
 
-// TODO NEW: void SetCurrentDOA(const std::vector<double> vfCurrentDOA)
 void System::SetCurrentDOALik(const std::vector<double> vfCurrentDOALik){
-	//mvfCurrentDOA = vfCurrentDOA;
 	mpDOAHandler->SetCurrentDOALik(vfCurrentDOALik);
 	mpDOAHandler->HandleNewDOAmsg();
 }

@@ -1,6 +1,16 @@
 /**
-* This file is part of ORB-SLAM2.
+* This file is part of the SSM_LinearArray (Sound Sources Mapping
+* using a Linear Microphone Array)
+* developed by Daobilige Su <daobilige DOT su AT student DOT uts DOT edu DOT au>
+*  
+* This file is a modified version of the original file in ORB-SLAM2, 
+* which is under GPLv3 licence. Therefore, this file also inherits 
+* the GPLv3 licence. 
 *
+* The visual SLAM frontend/backend is part of ORB-SLAM2.
+* The copyright of ORB-SLAM2 is described as follows:
+*
+* --
 * Copyright (C) 2014-2016 Raúl Mur-Artal <raulmur at unizar dot es> (University of Zaragoza)
 * For more information see <https://github.com/raulmur/ORB_SLAM2>
 *
@@ -16,8 +26,8 @@
 *
 * You should have received a copy of the GNU General Public License
 * along with ORB-SLAM2. If not, see <http://www.gnu.org/licenses/>.
+* --
 */
-
 #ifndef FRAME_H
 #define FRAME_H
 
@@ -32,7 +42,6 @@
 
 #include <opencv2/opencv.hpp>
 
-//TODO NEW
 #include <Eigen/Dense>
 
 namespace ORB_SLAM2
@@ -100,9 +109,6 @@ public:
 
     // Backprojects a keypoint (if stereo/depth info available) into 3D world coordinates.
     cv::Mat UnprojectStereo(const int &i);
-
-	//TODO NEW
-	// void ComputePointCloud(const cv::Mat &imRGB, const cv::Mat &imDepth);
 
 public:
     // Vocabulary used for relocalization.
@@ -193,8 +199,6 @@ public:
 
     static bool mbInitialComputations;
 
-	//TODO NEW
-	//std::vector< Eigen::Matrix<double,6,1> > mpPointCloud;
 	cv::Mat mPCImRGBRaw;
 	cv::Mat mPCImDepth;
 	static float mPCinvfx;

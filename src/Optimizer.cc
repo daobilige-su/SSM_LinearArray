@@ -1,6 +1,16 @@
-﻿/**
-* This file is part of ORB-SLAM2.
+/**
+* This file is part of the SSM_LinearArray (Sound Sources Mapping
+* using a Linear Microphone Array)
+* developed by Daobilige Su <daobilige DOT su AT student DOT uts DOT edu DOT au>
+*  
+* This file is a modified version of the original file in ORB-SLAM2, 
+* which is under GPLv3 licence. Therefore, this file also inherits 
+* the GPLv3 licence. 
 *
+* The visual SLAM frontend/backend is part of ORB-SLAM2.
+* The copyright of ORB-SLAM2 is described as follows:
+*
+* --
 * Copyright (C) 2014-2016 Raúl Mur-Artal <raulmur at unizar dot es> (University of Zaragoza)
 * For more information see <https://github.com/raulmur/ORB_SLAM2>
 *
@@ -16,6 +26,7 @@
 *
 * You should have received a copy of the GNU General Public License
 * along with ORB-SLAM2. If not, see <http://www.gnu.org/licenses/>.
+* --
 */
 
 #include "Optimizer.h"
@@ -28,7 +39,6 @@
 #include "Thirdparty/g2o/g2o/solvers/linear_solver_dense.h"
 #include "Thirdparty/g2o/g2o/types/types_seven_dof_expmap.h"
 
-// TODO NEW
 #include "Thirdparty/g2o/g2o/types/edge_se3_trackxyz_linear.h"
 #include "Thirdparty/g2o/g2o/types/vertex_se3.h"
 #include "Thirdparty/g2o/g2o/types/vertex_pointxyz.h"
@@ -539,8 +549,6 @@ void Optimizer::LocalBundleAdjustment(KeyFrame *pKF, bool* pbStopFlag, Map* pMap
 	linearSolver->setBlockOrdering(false);
 	SlamBlockSolver* blockSolver = new SlamBlockSolver(linearSolver);
 
-    //g2o::BlockSolver_6_3 * solver_ptr = new g2o::BlockSolver_6_3(linearSolver);
-
     g2o::OptimizationAlgorithmLevenberg* solver = new g2o::OptimizationAlgorithmLevenberg(blockSolver);
     optimizer.setAlgorithm(solver);
 
@@ -549,7 +557,7 @@ void Optimizer::LocalBundleAdjustment(KeyFrame *pKF, bool* pbStopFlag, Map* pMap
 
     unsigned long maxKFid = 0;
 
-	//TODO NEW SS vars
+	//NEW SS vars
 	int maxOptVertexid = 0;
 	std::vector<int> vOptKFidList;
 	vector<KeyFrame*> vpAllKFs = pMap->GetAllKeyFrames();
@@ -558,32 +566,21 @@ void Optimizer::LocalBundleAdjustment(KeyFrame *pKF, bool* pbStopFlag, Map* pMap
 
 	bool bOptSSFlag=false;
 	if(nCurrentSSID!=-1){
-		//if( ((pDOAHandler->mvpMultiHypoSSL).at(nCurrentSSID-1)).mnState==2 ){// if Sound Source of Current Keyframe has converged
-		//if (int((pDOAHandler->mvpMultiHypoSSL).size())>=nCurrentSSID){//TODO TEST
 		if( ((pDOAHandler->mvpMultiHypoSSL).at(nCurrentSSID-1)).mnState==2 ){
 			bOptSSFlag = true;
 		}
-		//}//TODO TEST
 	}
 
     // Set Local KeyFrame vertices
-	//TODO NEW
-	//std::vector<g2o::VertexSE3Expmap*> vpLocalKFVertex;
     for(list<KeyFrame*>::iterator lit=lLocalKeyFrames.begin(), lend=lLocalKeyFrames.end(); lit!=lend; lit++)
     {
         KeyFrame* pKFi = *lit;
         g2o::VertexSE3Expmap * vSE3 = new g2o::VertexSE3Expmap();
         vSE3->setEstimate(Converter::toSE3Quat(pKFi->GetPose()));
         vSE3->setId(pKFi->mnId);
-
-		//TODO NEW
 		vOptKFidList.push_back(pKFi->mnId);
-		
         vSE3->setFixed(pKFi->mnId==0);// only fix the first Keyframe.
         optimizer.addVertex(vSE3);
-
-		//TODO NEW
-		//vpLocalKFVertex.push_back(vSE3);
 
         if(pKFi->mnId>maxKFid)
             maxKFid=pKFi->mnId;
@@ -597,7 +594,6 @@ void Optimizer::LocalBundleAdjustment(KeyFrame *pKF, bool* pbStopFlag, Map* pMap
         vSE3->setEstimate(Converter::toSE3Quat(pKFi->GetPose()));
         vSE3->setId(pKFi->mnId);
 
-		//TODO NEW
 		vOptKFidList.push_back(pKFi->mnId);
 
         vSE3->setFixed(true);// THis means poses of these KeyFrame will be fixed and will not be optimized.
@@ -606,7 +602,7 @@ void Optimizer::LocalBundleAdjustment(KeyFrame *pKF, bool* pbStopFlag, Map* pMap
             maxKFid=pKFi->mnId;
     }
 
-	// TODO NEW SS obvservation fixed KFs Vertex
+	// NEW SS obvservation fixed KFs Vertex
 	std::vector<int>::iterator vOptKFidListIt;
 	if(bOptSSFlag){
 		// Keyframes Vertex (fixed)
@@ -616,11 +612,7 @@ void Optimizer::LocalBundleAdjustment(KeyFrame *pKF, bool* pbStopFlag, Map* pMap
 				vOptKFidListIt = std::find(vOptKFidList.begin(),vOptKFidList.end(),(*vit)->mnId);
 
 				if(vOptKFidListIt == vOptKFidList.end()){
-
-					//g2o::VertexSE3* vSE3SS = new g2o::VertexSE3();
 					g2o::VertexSE3Expmap* vSE3SS = new g2o::VertexSE3Expmap();
-					//mCurrentCameraPose = Converter::ORBSLAM2CameraFrameToSSLLinearFrame( Converter::toMatrix4d((*vit)->GetPoseInverse()) );
-					//vSE3SS->setEstimate(Converter::toSE3Quat( Converter::toCvMat(mCurrentCameraPose) ));
 					vSE3SS->setEstimate(Converter::toSE3Quat((*vit)->GetPose()));
 					vSE3SS->setId((*vit)->mnId);
 					vSE3SS->setFixed(true);// THis means poses of these KeyFrame will be fixed and will not be optimized.
@@ -659,9 +651,6 @@ void Optimizer::LocalBundleAdjustment(KeyFrame *pKF, bool* pbStopFlag, Map* pMap
     const float thHuberMono = sqrt(5.991);
     const float thHuberStereo = sqrt(7.815);
 
-	//TODO NEW
-	//std::vector<g2o::VertexSBAPointXYZ*> vpMapPointVertex;
-
     for(list<MapPoint*>::iterator lit=lLocalMapPoints.begin(), lend=lLocalMapPoints.end(); lit!=lend; lit++)
     {
         MapPoint* pMP = *lit;
@@ -672,8 +661,6 @@ void Optimizer::LocalBundleAdjustment(KeyFrame *pKF, bool* pbStopFlag, Map* pMap
         vPoint->setMarginalized(true);// TODO what does it mean by setMarginalized?
         optimizer.addVertex(vPoint);
 
-		// TODO NEW
-		//vpMapPointVertex.push_back(vPoint);
 		if(id>maxOptVertexid){
 			maxOptVertexid=id;
 		}
@@ -723,7 +710,7 @@ void Optimizer::LocalBundleAdjustment(KeyFrame *pKF, bool* pbStopFlag, Map* pMap
                     const float kp_ur = pKFi->mvuRight[mit->second];
                     obs << kpUn.pt.x, kpUn.pt.y, kp_ur;
 
-                    g2o::EdgeStereoSE3ProjectXYZ* e = new g2o::EdgeStereoSE3ProjectXYZ();// TODO is this a new edge type defined by the ORBSLAM2 author?
+                    g2o::EdgeStereoSE3ProjectXYZ* e = new g2o::EdgeStereoSE3ProjectXYZ();
 
                     e->setVertex(0, dynamic_cast<g2o::OptimizableGraph::Vertex*>(optimizer.vertex(id)));
                     e->setVertex(1, dynamic_cast<g2o::OptimizableGraph::Vertex*>(optimizer.vertex(pKFi->mnId)));
@@ -759,7 +746,6 @@ void Optimizer::LocalBundleAdjustment(KeyFrame *pKF, bool* pbStopFlag, Map* pMap
 		int vSSid = nCurrentSSID+maxOptVertexid;
 		vSS->setId(vSSid);
 		vSS->setFixed(false);
-		//vSS->setMarginalized(true);
 		optimizer.addVertex(vSS);
 
 		// SSL linear observation
@@ -774,8 +760,6 @@ void Optimizer::LocalBundleAdjustment(KeyFrame *pKF, bool* pbStopFlag, Map* pMap
 
 				eSS->setVertex(0, dynamic_cast<g2o::OptimizableGraph::Vertex*>(optimizer.vertex( (*vit)->mnId )));
         		eSS->setVertex(1, dynamic_cast<g2o::OptimizableGraph::Vertex*>(optimizer.vertex( nCurrentSSID+maxOptVertexid )));
-				//std::cout<<"SS op Edge 0 id: "<<(*vit)->mnId<<std::endl;
-				//std::cout<<"SS op Edge 1 id: "<<nCurrentSSID+maxOptVertexid<<std::endl;
 
 				SSLobs(0,0) = (*vit)->mvfCurrentDOA[0];
 				SSLobsStd(0,0) = (*vit)->mvfCurrentDOAStd[0];
@@ -795,9 +779,7 @@ void Optimizer::LocalBundleAdjustment(KeyFrame *pKF, bool* pbStopFlag, Map* pMap
     // (4) First Local BA optimization
     ///////////////////////////////
     optimizer.initializeOptimization();
-	//std::cout<<"O here1?"<<std::endl;
     optimizer.optimize(5);
-	//std::cout<<"O here2?"<<std::endl;
 
     bool bDoMore= true;
 
@@ -820,10 +802,9 @@ void Optimizer::LocalBundleAdjustment(KeyFrame *pKF, bool* pbStopFlag, Map* pMap
 
 			if(e->chi2()>5.991 || !e->isDepthPositive())// use chi2 dist and positive depth to check outliers
 			{
-				e->setLevel(1);// TODO what does it mean?
+				e->setLevel(1);
 			}
-
-			e->setRobustKernel(0);// TODO what does it mean?
+			e->setRobustKernel(0);
 		}
 
 		for(size_t i=0, iend=vpEdgesStereo.size(); i<iend;i++)
@@ -836,13 +817,10 @@ void Optimizer::LocalBundleAdjustment(KeyFrame *pKF, bool* pbStopFlag, Map* pMap
 
 			if(e->chi2()>7.815 || !e->isDepthPositive())// use chi2 dist and positive depth to check outliers
 			{
-				e->setLevel(1);// TODO what does it mean?
+				e->setLevel(1);
 			}
-
-			e->setRobustKernel(0);// TODO what does it mean?
+			e->setRobustKernel(0);
 		}
-
-
 
 		/////////////////////////////////////////////
 		// 2nd local BA, Optimize again without the outliers
@@ -924,7 +902,7 @@ void Optimizer::LocalBundleAdjustment(KeyFrame *pKF, bool* pbStopFlag, Map* pMap
     }
 
 
-	//TODO NEW recover sound source pose
+	// recover sound source pose
 
 	if(bOptSSFlag){
 		// State
@@ -944,46 +922,6 @@ void Optimizer::LocalBundleAdjustment(KeyFrame *pKF, bool* pbStopFlag, Map* pMap
 			}
 		}
 	}
-
-	/*
-	//Keyframes
-    Eigen::MatrixXd m;
-    int kf_num = 0;
-    for(list<KeyFrame*>::iterator lit=lLocalKeyFrames.begin(), lend=lLocalKeyFrames.end(); lit!=lend; lit++)
-    {
-        KeyFrame* pKF = *lit;
-        g2o::VertexSE3Expmap* vSE3 = static_cast<g2o::VertexSE3Expmap*>(optimizer.vertex(pKF->mnId));
-        g2o::SE3Quat SE3quat = vSE3->estimate();
-        pKF->SetPose(Converter::toCvMat(SE3quat));
-
-	
-		++kf_num;
-		    //std::cout<<"here?"<<std::endl;
-		//if((++lit)==lend)
-		//{
-		//std::cout<<"local key frame num = "<<kf_num<<std::endl;
-		if(optimizer.vertex(pKF->mnId)->hessianIndex()>0)
-		{
-			g2o::SparseBlockMatrix<Eigen::MatrixXd> spinv;
-			std::vector<std::pair<int,int> > blockIndices;
-			
-			blockIndices.push_back(make_pair(optimizer.vertex(pKF->mnId)->hessianIndex(),optimizer.vertex(pKF->mnId)->hessianIndex()));
-
-			//std::cout<<"here?"<<std::endl;
-			//std::cout<<"here"<<std::endl;
-			if(optimizer.computeMarginals(spinv,blockIndices))
-			{
-		
-			m = *(spinv.block(optimizer.vertex(pKF->mnId)->hessianIndex(),optimizer.vertex(pKF->mnId)->hessianIndex()));
-			//std::cout<<m<<std::endl;
-			pKF->SetPoseCov(m);
-			}
-		}
-		//}
-		//--lit;
-	
-    }
-	*/
 }
 
 

@@ -1,10 +1,15 @@
+/**
+* This file is part of the SSM_LinearArray (Sound Sources Mapping
+* using a Linear Microphone Array)
+* developed by Daobilige Su <daobilige DOT su AT student DOT uts DOT edu DOT au>
+*  
+* This file is under the GPLv3 licence. 
+*/
 #ifndef SSDataAssociation_H
 #define SSDataAssociation_H
 
 #include <Eigen/Dense>
 #include <math.h>
-//#include "SoundSource.h"
-//#include "EKFJacobians.h"
 #include <iostream>
 
 #include<string>
@@ -38,9 +43,6 @@ public:
 	double mfDOALikMin;
 
 	std::string msSettingPath;
-private:
-	
-
 };
 
 }

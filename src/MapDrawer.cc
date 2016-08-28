@@ -1,6 +1,16 @@
 /**
-* This file is part of ORB-SLAM2.
+* This file is part of the SSM_LinearArray (Sound Sources Mapping
+* using a Linear Microphone Array)
+* developed by Daobilige Su <daobilige DOT su AT student DOT uts DOT edu DOT au>
+*  
+* This file is a modified version of the original file in ORB-SLAM2, 
+* which is under GPLv3 licence. Therefore, this file also inherits 
+* the GPLv3 licence. 
 *
+* The visual SLAM frontend/backend is part of ORB-SLAM2.
+* The copyright of ORB-SLAM2 is described as follows:
+*
+* --
 * Copyright (C) 2014-2016 Raúl Mur-Artal <raulmur at unizar dot es> (University of Zaragoza)
 * For more information see <https://github.com/raulmur/ORB_SLAM2>
 *
@@ -16,6 +26,7 @@
 *
 * You should have received a copy of the GNU General Public License
 * along with ORB-SLAM2. If not, see <http://www.gnu.org/licenses/>.
+* --
 */
 
 #include "MapDrawer.h"
@@ -41,7 +52,7 @@ MapDrawer::MapDrawer(Map* pMap, const string &strSettingPath):mpMap(pMap)
 	mViewerDenseMappingDistMax = fSettings["Viewer.DenseMappingDistMax"];
 	mbMultiHypoEKFCovPlot = bool(int(fSettings["Viewer.bMultiHypoEKFCovPlot"]));
 	mbOptSSCovPlot = bool(int(fSettings["Viewer.bOptSSCovPlot"]));
-	
+	mfSSLineDist = fSettings["Viewer.SSLineDist"];
 }
 
 void MapDrawer::DrawMapPoints()
@@ -264,18 +275,16 @@ void MapDrawer::GetCurrentOpenGLCameraMatrix(pangolin::OpenGlMatrix &M)
         M.SetIdentity();
 }
 
-// TODO NEW: set DOA_handler
+// set DOA_handler
 void MapDrawer::SetDOAHandler(DOA_handler *pDOAHandler)
 {
     mpDOAHandler=pDOAHandler;
 }
 
-// TODO NEW: Draw Multi Hypo EKFs
+// Draw Multi Hypo EKFs
 void MapDrawer::DrawMultiHypoSSL()
 {
-
 	// params
-	//bool bPlotCov = true;
 	
     std::vector<MultiHypoSSL> vpMultiHypoSSL = mpDOAHandler->mvpMultiHypoSSL;
 	std::vector<SoundSource> vpSoundSource;
@@ -298,19 +307,13 @@ void MapDrawer::DrawMultiHypoSSL()
 
 	for(std::vector<MultiHypoSSL>::iterator vit=vpMultiHypoSSL.begin(), vend=vpMultiHypoSSL.end(); vit!=vend; vit++){
     	if(vit->mnState==1){
-			//std::vector<SoundSource> mvpSSLHypos;
 			vpSoundSource.clear();
 			vpSoundSource = vit->mvpSSLHypos;
 			
 			for(std::vector<SoundSource>::iterator vits=vpSoundSource.begin(), vends=vpSoundSource.end(); vits!=vends; vits++){
-			//std::vector<SoundSource>::iterator vits=vpSoundSource.begin();
 				if(vits->mbValid){
 					SoundSourceState = vits->mfmState;
 					SoundSourceCov = vits->mfmCov;
-
-					// draw the center
-					//SoundSourceStateLocalBearing << cos(SoundSourceState(4,0))*cos(SoundSourceState(3,0)),cos(SoundSourceState(4,0))*sin(SoundSourceState(3,0)),sin(SoundSourceState(4,0));
-					//SoundSourceStateGlobalXYZ = (1.0/SoundSourceState(5,0))*SoundSourceStateLocalBearing + SoundSourceState.block(0,0,3,1);
 					
 					Eigen::MatrixXd temp(3,1);
 					temp << SoundSourceState(3,0)-(M_PI/2.0), 0.0, SoundSourceState(4,0);
@@ -522,6 +525,48 @@ void MapDrawer::DrawMultiHypoSSL()
 			glVertex3f(SoundSourceStateGlobalXYZ(0,0),SoundSourceStateGlobalXYZ(1,0),SoundSourceStateGlobalXYZ(2,0));
 			glEnd();
 
+			glLineWidth(mCameraLineWidth);
+			glColor3f(0.0f,0.0f,0.0f);
+			glBegin(GL_LINES);
+			glVertex3f(SoundSourceStateGlobalXYZ(0,0)-mfSSLineDist,SoundSourceStateGlobalXYZ(1,0)-mfSSLineDist,SoundSourceStateGlobalXYZ(2,0)-mfSSLineDist);
+			glVertex3f(SoundSourceStateGlobalXYZ(0,0)-mfSSLineDist,SoundSourceStateGlobalXYZ(1,0)+mfSSLineDist,SoundSourceStateGlobalXYZ(2,0)-mfSSLineDist);
+
+			glVertex3f(SoundSourceStateGlobalXYZ(0,0)-mfSSLineDist,SoundSourceStateGlobalXYZ(1,0)+mfSSLineDist,SoundSourceStateGlobalXYZ(2,0)-mfSSLineDist);
+			glVertex3f(SoundSourceStateGlobalXYZ(0,0)+mfSSLineDist,SoundSourceStateGlobalXYZ(1,0)+mfSSLineDist,SoundSourceStateGlobalXYZ(2,0)-mfSSLineDist);
+
+			glVertex3f(SoundSourceStateGlobalXYZ(0,0)+mfSSLineDist,SoundSourceStateGlobalXYZ(1,0)+mfSSLineDist,SoundSourceStateGlobalXYZ(2,0)-mfSSLineDist);
+			glVertex3f(SoundSourceStateGlobalXYZ(0,0)+mfSSLineDist,SoundSourceStateGlobalXYZ(1,0)-mfSSLineDist,SoundSourceStateGlobalXYZ(2,0)-mfSSLineDist);
+
+			glVertex3f(SoundSourceStateGlobalXYZ(0,0)+mfSSLineDist,SoundSourceStateGlobalXYZ(1,0)-mfSSLineDist,SoundSourceStateGlobalXYZ(2,0)-mfSSLineDist);
+			glVertex3f(SoundSourceStateGlobalXYZ(0,0)-mfSSLineDist,SoundSourceStateGlobalXYZ(1,0)-mfSSLineDist,SoundSourceStateGlobalXYZ(2,0)-mfSSLineDist);
+
+
+			glVertex3f(SoundSourceStateGlobalXYZ(0,0)-mfSSLineDist,SoundSourceStateGlobalXYZ(1,0)-mfSSLineDist,SoundSourceStateGlobalXYZ(2,0)+mfSSLineDist);
+			glVertex3f(SoundSourceStateGlobalXYZ(0,0)-mfSSLineDist,SoundSourceStateGlobalXYZ(1,0)+mfSSLineDist,SoundSourceStateGlobalXYZ(2,0)+mfSSLineDist);
+
+			glVertex3f(SoundSourceStateGlobalXYZ(0,0)-mfSSLineDist,SoundSourceStateGlobalXYZ(1,0)+mfSSLineDist,SoundSourceStateGlobalXYZ(2,0)+mfSSLineDist);
+			glVertex3f(SoundSourceStateGlobalXYZ(0,0)+mfSSLineDist,SoundSourceStateGlobalXYZ(1,0)+mfSSLineDist,SoundSourceStateGlobalXYZ(2,0)+mfSSLineDist);
+
+			glVertex3f(SoundSourceStateGlobalXYZ(0,0)+mfSSLineDist,SoundSourceStateGlobalXYZ(1,0)+mfSSLineDist,SoundSourceStateGlobalXYZ(2,0)+mfSSLineDist);
+			glVertex3f(SoundSourceStateGlobalXYZ(0,0)+mfSSLineDist,SoundSourceStateGlobalXYZ(1,0)-mfSSLineDist,SoundSourceStateGlobalXYZ(2,0)+mfSSLineDist);
+
+			glVertex3f(SoundSourceStateGlobalXYZ(0,0)+mfSSLineDist,SoundSourceStateGlobalXYZ(1,0)-mfSSLineDist,SoundSourceStateGlobalXYZ(2,0)+mfSSLineDist);
+			glVertex3f(SoundSourceStateGlobalXYZ(0,0)-mfSSLineDist,SoundSourceStateGlobalXYZ(1,0)-mfSSLineDist,SoundSourceStateGlobalXYZ(2,0)+mfSSLineDist);
+
+
+			glVertex3f(SoundSourceStateGlobalXYZ(0,0)-mfSSLineDist,SoundSourceStateGlobalXYZ(1,0)-mfSSLineDist,SoundSourceStateGlobalXYZ(2,0)+mfSSLineDist);
+			glVertex3f(SoundSourceStateGlobalXYZ(0,0)-mfSSLineDist,SoundSourceStateGlobalXYZ(1,0)-mfSSLineDist,SoundSourceStateGlobalXYZ(2,0)-mfSSLineDist);
+
+			glVertex3f(SoundSourceStateGlobalXYZ(0,0)-mfSSLineDist,SoundSourceStateGlobalXYZ(1,0)+mfSSLineDist,SoundSourceStateGlobalXYZ(2,0)+mfSSLineDist);
+			glVertex3f(SoundSourceStateGlobalXYZ(0,0)-mfSSLineDist,SoundSourceStateGlobalXYZ(1,0)+mfSSLineDist,SoundSourceStateGlobalXYZ(2,0)-mfSSLineDist);
+
+			glVertex3f(SoundSourceStateGlobalXYZ(0,0)+mfSSLineDist,SoundSourceStateGlobalXYZ(1,0)+mfSSLineDist,SoundSourceStateGlobalXYZ(2,0)+mfSSLineDist);
+			glVertex3f(SoundSourceStateGlobalXYZ(0,0)+mfSSLineDist,SoundSourceStateGlobalXYZ(1,0)+mfSSLineDist,SoundSourceStateGlobalXYZ(2,0)-mfSSLineDist);
+
+			glVertex3f(SoundSourceStateGlobalXYZ(0,0)+mfSSLineDist,SoundSourceStateGlobalXYZ(1,0)-mfSSLineDist,SoundSourceStateGlobalXYZ(2,0)+mfSSLineDist);
+			glVertex3f(SoundSourceStateGlobalXYZ(0,0)+mfSSLineDist,SoundSourceStateGlobalXYZ(1,0)-mfSSLineDist,SoundSourceStateGlobalXYZ(2,0)-mfSSLineDist);
+			glEnd();
+
 			// draw the covariance ellipse
 			if(mbOptSSCovPlot){
 				SoundSourceCovEuc = vit->mmConvergedCov;
@@ -700,32 +745,11 @@ void MapDrawer::DrawMultiHypoSSL()
 			}//draw Cov
 		}// if draw Cov
 	}// if state == 2
-
-	
-
-    //for(set<MapPoint*>::iterator sit=spRefMPs.begin(), send=spRefMPs.end(); sit!=send; sit++)
-    //{
-    //    if((*sit)->isBad())
-    //        continue;
-    //    cv::Mat pos = (*sit)->GetWorldPos();
-    //    glVertex3f(pos.at<float>(0),pos.at<float>(1),pos.at<float>(2));
-
-    //}
-
-    //glEnd();
 }
 
 void MapDrawer::DrawPointCloud(){
-
-    //const float &w = mKeyFrameSize;
-    //const float h = w*0.75;
-    //const float z = w*0.6;
-
 	bool bDrawPointCloud = true;
-
     const vector<KeyFrame*> vpKFs = mpMap->GetAllKeyFrames();
-
-	//std::cout<<"DPC: here?"<<std::endl;
     if(bDrawPointCloud)
     {
         for(size_t i=0; i<vpKFs.size(); i++)
@@ -738,12 +762,6 @@ void MapDrawer::DrawPointCloud(){
 
 			glPointSize(mPointSize*1.0);
 			glBegin(GL_POINTS);
-
-			//cv::Mat mPCImDepth;
-			//static float mPCinvfx;
-    		//static float mPCinvfy;
-			//static float mPCcx;
-    		//static float mPCcy;
 
 			cv::Mat imRGB;
 			pKF->mPCImRGBRaw.copyTo(imRGB);
@@ -784,21 +802,7 @@ void MapDrawer::DrawPointCloud(){
 					}
 				}
 			}
-			/*
-			for(int k=0; k<int(pKF->mpPointCloud.size()); k++){
-				//std::cout<<"DPC: here1-0?"<<std::endl;
-				Eigen::Matrix<double,6,1> pPoint = pKF->mpPointCloud.at(k);
-				
-				//std::cout<<"DPC: here1-1?"<<std::endl;
-				//std::cout<<"pPoint: "<<pPoint(0)<<", "<<pPoint(1)<<", "<<pPoint(2)<<", "<<pPoint(3)<<std::endl;
-				glColor3f(double(pPoint(3,0)/255.0),double(pPoint(4,0)/255.0),double(pPoint(5,0)/255.0));
-				glVertex3f(pPoint(0,0),pPoint(1,0),pPoint(2,0));
-				//std::cout<<"DPC: here1-2?"<<std::endl;
-			}
-			*/
-
 			glEnd();
-
             glPopMatrix();
         }
     }
