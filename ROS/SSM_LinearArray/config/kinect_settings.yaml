@@ -180,7 +180,7 @@ Viewer.ViewpointF: 500
 #--------------------------------------------------------------------------------------------
 # Dense Mapping and MultiHypo Visualization Parameters
 #--------------------------------------------------------------------------------------------
-Viewer.DenseMappingDistMax: 2
+Viewer.DenseMappingDistMax: 5
 
 # plot multi hypo's covariance (1 plot, 0 don't plot)
 Viewer.bMultiHypoEKFCovPlot: 1

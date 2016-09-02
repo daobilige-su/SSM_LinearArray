@@ -519,12 +519,60 @@ void MapDrawer::DrawMultiHypoSSL()
 		if(vit->mnState==2){
 			SoundSourceStateGlobalXYZ = vit->mmConvergedState;
 
+			/*
 			glPointSize(mPointSize*10.0);
 			glBegin(GL_POINTS);
 			glColor3f(1.0,1.0,0.0);
 			glVertex3f(SoundSourceStateGlobalXYZ(0,0),SoundSourceStateGlobalXYZ(1,0),SoundSourceStateGlobalXYZ(2,0));
 			glEnd();
+			*/
+			// SS solide cube
+			glBegin(GL_POLYGON);
+			glColor3f(   1.0,  1.0, 0.0 );
+			glVertex3f(  SoundSourceStateGlobalXYZ(0,0)-mfSSLineDist,SoundSourceStateGlobalXYZ(1,0)-mfSSLineDist,SoundSourceStateGlobalXYZ(2,0)-mfSSLineDist );
+			glVertex3f(  SoundSourceStateGlobalXYZ(0,0)-mfSSLineDist,SoundSourceStateGlobalXYZ(1,0)+mfSSLineDist,SoundSourceStateGlobalXYZ(2,0)-mfSSLineDist );
+			glVertex3f( SoundSourceStateGlobalXYZ(0,0)+mfSSLineDist,SoundSourceStateGlobalXYZ(1,0)+mfSSLineDist,SoundSourceStateGlobalXYZ(2,0)-mfSSLineDist );
+			glVertex3f( SoundSourceStateGlobalXYZ(0,0)+mfSSLineDist,SoundSourceStateGlobalXYZ(1,0)-mfSSLineDist,SoundSourceStateGlobalXYZ(2,0)-mfSSLineDist );
+			glEnd();
+			glBegin(GL_POLYGON);
+			glColor3f(   1.0,  1.0, 0.0 );
+			glVertex3f(  SoundSourceStateGlobalXYZ(0,0)-mfSSLineDist,SoundSourceStateGlobalXYZ(1,0)-mfSSLineDist,SoundSourceStateGlobalXYZ(2,0)+mfSSLineDist );
+			glVertex3f(  SoundSourceStateGlobalXYZ(0,0)-mfSSLineDist,SoundSourceStateGlobalXYZ(1,0)+mfSSLineDist,SoundSourceStateGlobalXYZ(2,0)+mfSSLineDist );
+			glVertex3f( SoundSourceStateGlobalXYZ(0,0)+mfSSLineDist,SoundSourceStateGlobalXYZ(1,0)+mfSSLineDist,SoundSourceStateGlobalXYZ(2,0)+mfSSLineDist );
+			glVertex3f( SoundSourceStateGlobalXYZ(0,0)+mfSSLineDist,SoundSourceStateGlobalXYZ(1,0)-mfSSLineDist,SoundSourceStateGlobalXYZ(2,0)+mfSSLineDist );
+			glEnd();
 
+			glBegin(GL_POLYGON);
+			glColor3f(   1.0,  1.0, 0.0 );
+			glVertex3f( SoundSourceStateGlobalXYZ(0,0)-mfSSLineDist,SoundSourceStateGlobalXYZ(1,0)-mfSSLineDist,SoundSourceStateGlobalXYZ(2,0)-mfSSLineDist );
+			glVertex3f( SoundSourceStateGlobalXYZ(0,0)-mfSSLineDist,SoundSourceStateGlobalXYZ(1,0)-mfSSLineDist,SoundSourceStateGlobalXYZ(2,0)+mfSSLineDist );
+			glVertex3f( SoundSourceStateGlobalXYZ(0,0)-mfSSLineDist,SoundSourceStateGlobalXYZ(1,0)+mfSSLineDist,SoundSourceStateGlobalXYZ(2,0)+mfSSLineDist );
+			glVertex3f( SoundSourceStateGlobalXYZ(0,0)-mfSSLineDist,SoundSourceStateGlobalXYZ(1,0)+mfSSLineDist,SoundSourceStateGlobalXYZ(2,0)-mfSSLineDist );
+			glEnd();
+			glBegin(GL_POLYGON);
+			glColor3f(   1.0,  1.0, 0.0 );
+			glVertex3f( SoundSourceStateGlobalXYZ(0,0)+mfSSLineDist,SoundSourceStateGlobalXYZ(1,0)-mfSSLineDist,SoundSourceStateGlobalXYZ(2,0)-mfSSLineDist );
+			glVertex3f( SoundSourceStateGlobalXYZ(0,0)+mfSSLineDist,SoundSourceStateGlobalXYZ(1,0)-mfSSLineDist,SoundSourceStateGlobalXYZ(2,0)+mfSSLineDist );
+			glVertex3f( SoundSourceStateGlobalXYZ(0,0)+mfSSLineDist,SoundSourceStateGlobalXYZ(1,0)+mfSSLineDist,SoundSourceStateGlobalXYZ(2,0)+mfSSLineDist );
+			glVertex3f( SoundSourceStateGlobalXYZ(0,0)+mfSSLineDist,SoundSourceStateGlobalXYZ(1,0)+mfSSLineDist,SoundSourceStateGlobalXYZ(2,0)-mfSSLineDist );
+			glEnd();
+
+			glBegin(GL_POLYGON);
+			glColor3f(   1.0,  1.0, 0.0 );
+			glVertex3f( SoundSourceStateGlobalXYZ(0,0)-mfSSLineDist,SoundSourceStateGlobalXYZ(1,0)-mfSSLineDist,SoundSourceStateGlobalXYZ(2,0)-mfSSLineDist );
+			glVertex3f( SoundSourceStateGlobalXYZ(0,0)-mfSSLineDist,SoundSourceStateGlobalXYZ(1,0)-mfSSLineDist,SoundSourceStateGlobalXYZ(2,0)+mfSSLineDist );
+			glVertex3f( SoundSourceStateGlobalXYZ(0,0)+mfSSLineDist,SoundSourceStateGlobalXYZ(1,0)-mfSSLineDist,SoundSourceStateGlobalXYZ(2,0)+mfSSLineDist );
+			glVertex3f( SoundSourceStateGlobalXYZ(0,0)+mfSSLineDist,SoundSourceStateGlobalXYZ(1,0)-mfSSLineDist,SoundSourceStateGlobalXYZ(2,0)-mfSSLineDist );
+			glEnd();
+			glBegin(GL_POLYGON);
+			glColor3f(   1.0,  1.0, 0.0 );
+			glVertex3f( SoundSourceStateGlobalXYZ(0,0)-mfSSLineDist,SoundSourceStateGlobalXYZ(1,0)+mfSSLineDist,SoundSourceStateGlobalXYZ(2,0)-mfSSLineDist );
+			glVertex3f( SoundSourceStateGlobalXYZ(0,0)-mfSSLineDist,SoundSourceStateGlobalXYZ(1,0)+mfSSLineDist,SoundSourceStateGlobalXYZ(2,0)+mfSSLineDist );
+			glVertex3f( SoundSourceStateGlobalXYZ(0,0)+mfSSLineDist,SoundSourceStateGlobalXYZ(1,0)+mfSSLineDist,SoundSourceStateGlobalXYZ(2,0)+mfSSLineDist );
+			glVertex3f( SoundSourceStateGlobalXYZ(0,0)+mfSSLineDist,SoundSourceStateGlobalXYZ(1,0)+mfSSLineDist,SoundSourceStateGlobalXYZ(2,0)-mfSSLineDist );
+			glEnd();
+			
+			// Edge of SS solid cube
 			glLineWidth(mCameraLineWidth);
 			glColor3f(0.0f,0.0f,0.0f);
 			glBegin(GL_LINES);
