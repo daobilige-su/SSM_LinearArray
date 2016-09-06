@@ -44,12 +44,17 @@
 #include <mutex>
 #include "Thirdparty/g2o/g2o/types/types_seven_dof_expmap.h"
 
+// TODO NEW
+#include "DOA_handler.h"
+
 namespace ORB_SLAM2
 {
 
 class Tracking;
 class LocalMapping;
 class KeyFrameDatabase;
+// TODO NEW
+class DOA_handler;
 
 class LoopClosing
 {
@@ -58,6 +63,8 @@ public:
     typedef pair<set<KeyFrame*>,int> ConsistentGroup;    
     typedef map<KeyFrame*,g2o::Sim3,std::less<KeyFrame*>,
         Eigen::aligned_allocator<std::pair<const KeyFrame*, g2o::Sim3> > > KeyFrameAndPose;
+
+	
 
 public:
 
@@ -89,6 +96,9 @@ public:
     void RequestFinish();
 
     bool isFinished();
+	
+	// TODO NEW
+	void SetDOAHandler(DOA_handler *pDOAHandler);
 
 protected:
 
@@ -149,6 +159,9 @@ protected:
 
     // Fix scale in the stereo/RGB-D case
     bool mbFixScale;
+
+	//TODO NEW
+	DOA_handler* mpDOAHandler;
 };
 
 } //namespace ORB_SLAM

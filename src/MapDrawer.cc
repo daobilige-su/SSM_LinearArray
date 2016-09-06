@@ -282,8 +282,11 @@ void MapDrawer::SetDOAHandler(DOA_handler *pDOAHandler)
 }
 
 // Draw Multi Hypo EKFs
-void MapDrawer::DrawMultiHypoSSL()
+void MapDrawer::DrawMultiHypoSSL(const bool bmenuShowSSCov)
 {
+	if(bmenuShowSSCov){
+		mbOptSSCovPlot = true;
+	}
 	// params
 	
     std::vector<MultiHypoSSL> vpMultiHypoSSL = mpDOAHandler->mvpMultiHypoSSL;
@@ -351,8 +354,11 @@ void MapDrawer::DrawMultiHypoSSL()
 							a = sqrt(0.5*(sxx+syy+sqrt(pow((sxx-syy),2) + 4*pow(sxy,2))));
 							b = sqrt(0.5*(sxx+syy-sqrt(pow((sxx-syy),2) + 4*pow(sxy,2))));					
 							// 3 sigma region
-							a *= sqrt(11.6183);
-							b *= sqrt(11.6183);
+							//a *= sqrt(11.6183);
+							//b *= sqrt(11.6183);
+							// 1 sigma region:2.15, 2 sigma region:6.0
+							a *= sqrt(2.15);
+							b *= sqrt(2.15);
 							if(sxx<syy){
 								swap = a;
 								a=b;
@@ -408,8 +414,11 @@ void MapDrawer::DrawMultiHypoSSL()
 							a = sqrt(0.5*(sxx+syy+sqrt(pow((sxx-syy),2) + 4*pow(sxy,2))));
 							b = sqrt(0.5*(sxx+syy-sqrt(pow((sxx-syy),2) + 4*pow(sxy,2))));					
 							// 3 sigma region
-							a *= sqrt(11.6183);
-							b *= sqrt(11.6183);
+							//a *= sqrt(11.6183);
+							//b *= sqrt(11.6183);
+							// 1 sigma region:2.15, 2 sigma region:6.0
+							a *= sqrt(2.15);
+							b *= sqrt(2.15);
 							if(sxx<syy){
 								swap = a;
 								a=b;
@@ -465,8 +474,11 @@ void MapDrawer::DrawMultiHypoSSL()
 							a = sqrt(0.5*(sxx+syy+sqrt(pow((sxx-syy),2) + 4*pow(sxy,2))));
 							b = sqrt(0.5*(sxx+syy-sqrt(pow((sxx-syy),2) + 4*pow(sxy,2))));					
 							// 3 sigma region
-							a *= sqrt(11.6183);
-							b *= sqrt(11.6183);
+							//a *= sqrt(11.6183);
+							//b *= sqrt(11.6183);
+							// 1 sigma region:2.15, 2 sigma region:6.0
+							a *= sqrt(2.15);
+							b *= sqrt(2.15);
 							if(sxx<syy){
 								swap = a;
 								a=b;
@@ -631,8 +643,11 @@ void MapDrawer::DrawMultiHypoSSL()
 					a = sqrt(0.5*(sxx+syy+sqrt(pow((sxx-syy),2) + 4*pow(sxy,2))));
 					b = sqrt(0.5*(sxx+syy-sqrt(pow((sxx-syy),2) + 4*pow(sxy,2))));					
 					// 3 sigma region
-					a *= sqrt(11.6183);
-					b *= sqrt(11.6183);
+					//a *= sqrt(11.6183);
+					//b *= sqrt(11.6183);
+					// 1 sigma region:2.15, 2 sigma region:6.0
+					a *= sqrt(2.15);
+					b *= sqrt(2.15);
 					if(sxx<syy){
 						swap = a;
 						a=b;
@@ -688,8 +703,11 @@ void MapDrawer::DrawMultiHypoSSL()
 					a = sqrt(0.5*(sxx+syy+sqrt(pow((sxx-syy),2) + 4*pow(sxy,2))));
 					b = sqrt(0.5*(sxx+syy-sqrt(pow((sxx-syy),2) + 4*pow(sxy,2))));					
 					// 3 sigma region
-					a *= sqrt(11.6183);
-					b *= sqrt(11.6183);
+					//a *= sqrt(11.6183);
+					//b *= sqrt(11.6183);
+					// 1 sigma region:2.15, 2 sigma region:6.0
+					a *= sqrt(2.15);
+					b *= sqrt(2.15);
 					if(sxx<syy){
 						swap = a;
 						a=b;
@@ -745,8 +763,11 @@ void MapDrawer::DrawMultiHypoSSL()
 					a = sqrt(0.5*(sxx+syy+sqrt(pow((sxx-syy),2) + 4*pow(sxy,2))));
 					b = sqrt(0.5*(sxx+syy-sqrt(pow((sxx-syy),2) + 4*pow(sxy,2))));					
 					// 3 sigma region
-					a *= sqrt(11.6183);
-					b *= sqrt(11.6183);
+					//a *= sqrt(11.6183);
+					//b *= sqrt(11.6183);
+					// 1 sigma region:2.15, 2 sigma region:6.0
+					a *= sqrt(2.15);
+					b *= sqrt(2.15);
 					if(sxx<syy){
 						swap = a;
 						a=b;

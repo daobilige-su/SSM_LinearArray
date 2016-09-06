@@ -130,6 +130,7 @@ System::System(const string &strVocFile, const string &strSettingsFile, const eS
 	mpDOAHandler->SetTracker(mpTracker);
 	mpMapDrawer->SetDOAHandler(mpDOAHandler);
 	mpLocalMapper->SetDOAHandler(mpDOAHandler);
+	mpLoopCloser->SetDOAHandler(mpDOAHandler);
 }
 
 cv::Mat System::TrackStereo(const cv::Mat &imLeft, const cv::Mat &imRight, const double &timestamp)

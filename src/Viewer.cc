@@ -80,6 +80,7 @@ void Viewer::Run()
     pangolin::Var<bool> menuShowPoints("menu.Show Points",true,true);
 
 	pangolin::Var<bool> menuShowDensePointCloud("menu.Show Dense PointCloud",false,true);
+	pangolin::Var<bool> menuShowSSCov("menu.Show Sound sources Cov",false,true);
 
     pangolin::Var<bool> menuShowKeyFrames("menu.Show KeyFrames",true,true);
     pangolin::Var<bool> menuShowGraph("menu.Show Graph",true,true);
@@ -143,7 +144,7 @@ void Viewer::Run()
         if(menuShowKeyFrames || menuShowGraph)
             mpMapDrawer->DrawKeyFrames(menuShowKeyFrames,menuShowGraph);
 
-		mpMapDrawer->DrawMultiHypoSSL();
+		mpMapDrawer->DrawMultiHypoSSL(menuShowSSCov);
 
         if(menuShowPoints){
             mpMapDrawer->DrawMapPoints();
@@ -167,6 +168,7 @@ void Viewer::Run()
             menuShowPoints = true;
 
 			menuShowDensePointCloud = false;
+			menuShowSSCov = false;
 
             menuLocalizationMode = false;
             if(bLocalizationMode)

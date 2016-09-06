@@ -720,7 +720,8 @@ void LoopClosing::RunGlobalBundleAdjustment(unsigned long nLoopKF)
     //////////////
     // (1) running Global BA
     //////////////
-    Optimizer::GlobalBundleAdjustemnt(mpMap,20,&mbStopGBA,nLoopKF,false);
+	//TODO NEW
+    Optimizer::GlobalBundleAdjustemnt(mpMap,20,&mbStopGBA,nLoopKF,false,mpDOAHandler);
 
     // Update all MapPoints and KeyFrames
     // Local Mapping was active during BA, that means that there might be new keyframes
@@ -842,5 +843,10 @@ bool LoopClosing::isFinished()
     return mbFinished;
 }
 
+// set DOA_handler
+void LoopClosing::SetDOAHandler(DOA_handler *pDOAHandler)
+{
+    mpDOAHandler=pDOAHandler;
+}
 
 } //namespace ORB_SLAM

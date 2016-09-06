@@ -54,20 +54,21 @@ namespace ORB_SLAM2
 {
 
 
-void Optimizer::GlobalBundleAdjustemnt(Map* pMap, int nIterations, bool* pbStopFlag, const unsigned long nLoopKF, const bool bRobust)
+void Optimizer::GlobalBundleAdjustemnt(Map* pMap, int nIterations, bool* pbStopFlag, const unsigned long nLoopKF, const bool bRobust, DOA_handler* pDOAHandler)
 {
     vector<KeyFrame*> vpKFs = pMap->GetAllKeyFrames();
     vector<MapPoint*> vpMP = pMap->GetAllMapPoints();
-    BundleAdjustment(vpKFs,vpMP,nIterations,pbStopFlag, nLoopKF, bRobust);
+    BundleAdjustment(vpKFs,vpMP,nIterations,pbStopFlag, nLoopKF, bRobust, pDOAHandler);
 }
 
 
 void Optimizer::BundleAdjustment(const vector<KeyFrame *> &vpKFs, const vector<MapPoint *> &vpMP,
-                                 int nIterations, bool* pbStopFlag, const unsigned long nLoopKF, const bool bRobust)
+                                 int nIterations, bool* pbStopFlag, const unsigned long nLoopKF, const bool bRobust, DOA_handler* pDOAHandler)
 {
     vector<bool> vbNotIncludedMP;
     vbNotIncludedMP.resize(vpMP.size());
 
+	/*
     g2o::SparseOptimizer optimizer;
     g2o::BlockSolver_6_3::LinearSolverType * linearSolver;
 
@@ -77,11 +78,55 @@ void Optimizer::BundleAdjustment(const vector<KeyFrame *> &vpKFs, const vector<M
 
     g2o::OptimizationAlgorithmLevenberg* solver = new g2o::OptimizationAlgorithmLevenberg(solver_ptr);
     optimizer.setAlgorithm(solver);
+	*/
+
+	// TODO NEW
+	typedef g2o::BlockSolver< g2o::BlockSolverTraits<-1, -1> > SlamBlockSolver;
+	typedef g2o::LinearSolverCSparse<SlamBlockSolver::PoseMatrixType> SlamLinearSolver;
+
+	g2o::SparseOptimizer optimizer;
+    SlamLinearSolver* linearSolver = new SlamLinearSolver();
+	linearSolver->setBlockOrdering(false);
+	SlamBlockSolver* blockSolver = new SlamBlockSolver(linearSolver);
+
+    g2o::OptimizationAlgorithmLevenberg* solver = new g2o::OptimizationAlgorithmLevenberg(blockSolver);
+    optimizer.setAlgorithm(solver);
+
+
+
+
+
 
     if(pbStopFlag)
         optimizer.setForceStopFlag(pbStopFlag);
 
     long unsigned int maxKFid = 0;
+
+
+
+
+
+
+	// TODO NEW SS vars
+	int maxOptVertexid = 0;
+	std::vector<int> vnCurrentSSID;
+
+	bool bOptSSFlag=false;
+	if(pDOAHandler->mvpMultiHypoSSL.size()>0){
+		for(int MultiHypoSSLIndex=0;MultiHypoSSLIndex<int(pDOAHandler->mvpMultiHypoSSL.size());MultiHypoSSLIndex++){
+			if( ((pDOAHandler->mvpMultiHypoSSL).at(MultiHypoSSLIndex)).mnState==2 ){
+				vnCurrentSSID.push_back(MultiHypoSSLIndex+1);
+				if(bOptSSFlag == false){
+					bOptSSFlag = true;
+				}
+			}
+		}
+	}
+
+
+
+
+
 
     // Set KeyFrame vertices
     for(size_t i=0; i<vpKFs.size(); i++)
@@ -113,6 +158,11 @@ void Optimizer::BundleAdjustment(const vector<KeyFrame *> &vpKFs, const vector<M
         vPoint->setId(id);
         vPoint->setMarginalized(true);
         optimizer.addVertex(vPoint);
+
+		// TODO NEW
+		if(id>maxOptVertexid){
+			maxOptVertexid = id;
+		}
 
        const map<KeyFrame*,size_t> observations = pMP->GetObservations();
 
@@ -199,6 +249,44 @@ void Optimizer::BundleAdjustment(const vector<KeyFrame *> &vpKFs, const vector<M
         }
     }
 
+	// TODO NEW SS obvservation fixed KFs Vertex
+	std::vector<int>::iterator vOptKFidListIt;
+	if(bOptSSFlag){
+		for(int nSSIDIndex = 0; nSSIDIndex<int(vnCurrentSSID.size());nSSIDIndex++){
+			int nCurrentSSID = vnCurrentSSID.at(nSSIDIndex);
+
+			// Sound Source Vertex
+			g2o::VertexPointXYZ* vSS = new g2o::VertexPointXYZ();
+			vSS->setEstimate( ((pDOAHandler->mvpMultiHypoSSL).at(nCurrentSSID-1)).mmConvergedState );
+			int vSSid = nCurrentSSID+maxOptVertexid;
+			vSS->setId(vSSid);
+			optimizer.addVertex(vSS);
+
+			// SSL linear observation
+			Eigen::MatrixXd SSLobs(1,1);
+			Eigen::MatrixXd SSLobsStd(1,1);
+
+			for(vector<KeyFrame*>::const_iterator vit=vpKFs.begin(), vitend=vpKFs.end(); vit!=vitend; vit++)
+			{
+				if((*vit)->mnCurrentSSID == nCurrentSSID){
+
+					g2o::EdgeSE3ExpmapPointXYZLinear* eSS = new g2o::EdgeSE3ExpmapPointXYZLinear();
+
+					eSS->setVertex(0, dynamic_cast<g2o::OptimizableGraph::Vertex*>(optimizer.vertex( (*vit)->mnId )));
+		    		eSS->setVertex(1, dynamic_cast<g2o::OptimizableGraph::Vertex*>(optimizer.vertex( nCurrentSSID+maxOptVertexid )));
+
+					SSLobs(0,0) = (*vit)->mvfCurrentDOA[0];
+					SSLobsStd(0,0) = (*vit)->mvfCurrentDOAStd[0];
+					eSS->setMeasurement(SSLobs);
+					eSS->setInformation(SSLobsStd);
+				
+					optimizer.addEdge(eSS);
+				}
+			}
+		}
+	}
+	
+
     // Optimize!
     optimizer.initializeOptimization();
     optimizer.optimize(nIterations);
@@ -250,6 +338,29 @@ void Optimizer::BundleAdjustment(const vector<KeyFrame *> &vpKFs, const vector<M
         }
     }
 
+	// TODO NEW: recover SS opt
+	if(bOptSSFlag){
+		for(int nSSIDIndex = 0; nSSIDIndex<int(vnCurrentSSID.size());nSSIDIndex++){
+			int nCurrentSSID = vnCurrentSSID.at(nSSIDIndex);
+
+			// State
+			g2o::VertexPointXYZ* vSSAfterOpt = static_cast<g2o::VertexPointXYZ*>(optimizer.vertex( nCurrentSSID+maxOptVertexid ));
+			Eigen::MatrixXd SSStateAfterOpt = vSSAfterOpt->estimate();
+			((pDOAHandler->mvpMultiHypoSSL).at(nCurrentSSID-1)).mmConvergedState = SSStateAfterOpt;
+
+			// Cov
+			if(optimizer.vertex(nCurrentSSID+maxOptVertexid)->hessianIndex()>0)
+			{
+				g2o::SparseBlockMatrix<Eigen::MatrixXd> spinv;
+				std::vector<std::pair<int,int> > blockIndices;
+			
+				blockIndices.push_back(make_pair(optimizer.vertex(nCurrentSSID+maxOptVertexid)->hessianIndex(),optimizer.vertex(nCurrentSSID+maxOptVertexid)->hessianIndex()));
+				if(optimizer.computeMarginals(spinv,blockIndices)){
+					((pDOAHandler->mvpMultiHypoSSL).at(nCurrentSSID-1)).mmConvergedCov = *(spinv.block(optimizer.vertex(nCurrentSSID+maxOptVertexid)->hessianIndex(),optimizer.vertex(nCurrentSSID+maxOptVertexid)->hessianIndex()));
+				}
+			}
+		}
+	}
 }
 
 // this function "Optimizer::PoseOptimization" uses existing mappoints to optimize the pose of current frame.
@@ -779,7 +890,7 @@ void Optimizer::LocalBundleAdjustment(KeyFrame *pKF, bool* pbStopFlag, Map* pMap
     // (4) First Local BA optimization
     ///////////////////////////////
     optimizer.initializeOptimization();
-    optimizer.optimize(5);
+    optimizer.optimize(5);//5
 
     bool bDoMore= true;
 
@@ -826,7 +937,7 @@ void Optimizer::LocalBundleAdjustment(KeyFrame *pKF, bool* pbStopFlag, Map* pMap
 		// 2nd local BA, Optimize again without the outliers
 		/////////////////////////////////////////////
 		optimizer.initializeOptimization(0);
-		optimizer.optimize(10);
+		optimizer.optimize(10);//10
 
     }
 
@@ -922,6 +1033,82 @@ void Optimizer::LocalBundleAdjustment(KeyFrame *pKF, bool* pbStopFlag, Map* pMap
 			}
 		}
 	}
+
+	/*
+	optimizer.clear();
+	maxKFid = 0;
+	// NEW SS obvservation fixed KFs Vertex
+	if(bOptSSFlag){
+		// Keyframes Vertex (fixed)
+		for(vector<KeyFrame*>::const_iterator vit=vpAllKFs.begin(), vitend=vpAllKFs.end(); vit!=vitend; vit++)
+		{
+			if((*vit)->mnCurrentSSID == nCurrentSSID){
+				g2o::VertexSE3Expmap* vSE3SS = new g2o::VertexSE3Expmap();
+				vSE3SS->setEstimate(Converter::toSE3Quat((*vit)->GetPose()));
+				vSE3SS->setId((*vit)->mnId);
+				vSE3SS->setFixed(true);// THis means poses of these KeyFrame will be fixed and will not be optimized.
+
+				if((*vit)->mnId>maxKFid)
+		   			maxKFid=(*vit)->mnId;
+		
+				optimizer.addVertex(vSE3SS);
+			}
+		}
+	}
+
+	//TODO NEW sound source vertex and observations edges	
+	if(bOptSSFlag){
+		// Sound Source Vertex
+		g2o::VertexPointXYZ* vSS = new g2o::VertexPointXYZ();
+		vSS->setEstimate( ((pDOAHandler->mvpMultiHypoSSL).at(nCurrentSSID-1)).mmConvergedState );
+		int vSSid = nCurrentSSID+maxKFid;
+		vSS->setId(vSSid);
+		//vSS->setFixed(false);
+		optimizer.addVertex(vSS);
+
+		// SSL linear observation
+		Eigen::MatrixXd SSLobs(1,1);
+		Eigen::MatrixXd SSLobsStd(1,1);
+
+		for(vector<KeyFrame*>::const_iterator vit=vpAllKFs.begin(), vitend=vpAllKFs.end(); vit!=vitend; vit++)
+		{
+			if((*vit)->mnCurrentSSID == nCurrentSSID){
+
+				g2o::EdgeSE3ExpmapPointXYZLinear* eSS = new g2o::EdgeSE3ExpmapPointXYZLinear();
+
+				eSS->setVertex(0, dynamic_cast<g2o::OptimizableGraph::Vertex*>(optimizer.vertex( (*vit)->mnId )));
+        		eSS->setVertex(1, dynamic_cast<g2o::OptimizableGraph::Vertex*>(optimizer.vertex( nCurrentSSID+maxKFid )));
+
+				SSLobs(0,0) = (*vit)->mvfCurrentDOA[0];
+				SSLobsStd(0,0) = (*vit)->mvfCurrentDOAStd[0];
+				eSS->setMeasurement(SSLobs);
+				eSS->setInformation(SSLobsStd);
+				
+				optimizer.addEdge(eSS);
+			}
+		}
+	}
+	optimizer.initializeOptimization(0);
+	optimizer.optimize(10);//10
+	if(bOptSSFlag){
+		// State
+		g2o::VertexPointXYZ* vSSAfterOpt = static_cast<g2o::VertexPointXYZ*>(optimizer.vertex( nCurrentSSID+maxKFid ));
+		Eigen::MatrixXd SSStateAfterOpt = vSSAfterOpt->estimate();
+		((pDOAHandler->mvpMultiHypoSSL).at(nCurrentSSID-1)).mmConvergedState = SSStateAfterOpt;
+
+		// Cov
+		if(optimizer.vertex(nCurrentSSID+maxKFid)->hessianIndex()>0)
+		{
+			g2o::SparseBlockMatrix<Eigen::MatrixXd> spinv;
+			std::vector<std::pair<int,int> > blockIndices;
+			
+			blockIndices.push_back(make_pair(optimizer.vertex(nCurrentSSID+maxKFid)->hessianIndex(),optimizer.vertex(nCurrentSSID+maxKFid)->hessianIndex()));
+			if(optimizer.computeMarginals(spinv,blockIndices)){
+				((pDOAHandler->mvpMultiHypoSSL).at(nCurrentSSID-1)).mmConvergedCov = *(spinv.block(optimizer.vertex(nCurrentSSID+maxKFid)->hessianIndex(),optimizer.vertex(nCurrentSSID+maxKFid)->hessianIndex()));
+			}
+		}
+	}
+	*/
 }
 
 

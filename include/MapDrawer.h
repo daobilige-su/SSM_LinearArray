@@ -65,7 +65,7 @@ public:
     void GetCurrentOpenGLCameraMatrix(pangolin::OpenGlMatrix &M);
 
 	void SetDOAHandler(DOA_handler *pDOAHandler);
-	void DrawMultiHypoSSL();
+	void DrawMultiHypoSSL(const bool bmenuShowSSCov);
 	void DrawPointCloud();
 
 private:
