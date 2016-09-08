@@ -3,17 +3,17 @@
 
 **Current version:** 1.0.0 
 
-SSM\_LinearArray is a real-time SLAM library for sound sources mapping using an off-shelf robotic perception device (e.g. Kinect or PS3-Eye), which have an embedded linear microphone array embedded inside. SSM\_LinearArray reads raw image (Mono/RGB-D) and audio data computes the camera trajectory, sound sources locations and a dense/sparse 3D reconstruction when a Kinect (**RGB-D** Camera) / PS3-Eye (**Monocular** Camera) is used.
+SSM\_LinearArray is a real-time SLAM library for sound sources mapping using an off-shelf robotic perception device (e.g. Kinect or PS3-Eye), which have a linear microphone array embedded inside. SSM\_LinearArray reads raw image (Mono/RGB-D), audio data and computes the camera trajectory, sound sources locations and a dense/sparse 3D reconstruction when a Kinect (**RGB-D** Camera) / PS3-Eye (**Monocular** Camera) is used.
 
 <!--
 #####Videos showing ORB-SLAM2:
 <a href="http://www.youtube.com/watch?feature=player_embedded&v=dF7_I2Lin54
 " target="_blank"><img src="http://img.youtube.com/vi/dF7_I2Lin54/0.jpg" 
 alt="DataArena DataSet" width="240" height="180" border="10" /></a>
--->
+
 
 ###Related Publications:
-
+-->
 
 #1. License
 
@@ -62,13 +62,13 @@ sudo apt-get install liblapack-dev
 Modified versions of the [DBoW2](https://github.com/dorian3d/DBoW2) library are to perform place recognition and [g2o](https://github.com/RainerKuemmerle/g2o) library to perform non-linear optimizations. Both modified libraries (which are BSD) are included in the *Thirdparty* folder. Original version of [libgp](https://github.com/mblum/libgp) is used for building microphone array sensor model using Gaussian Process.
 
 ## ROS
-ROS is needed to process the live input of the sensor or pre-recorded rosbag files using [ROS](ros.org).
+[ROS](ros.org) is needed to process the live input of the sensor or pre-recorded rosbag files.
 
 ## Freenect (optional)
-[Freenect](https://github.com/OpenKinect/libfreenect) library is needed if live processing of kinect microphone array is needed. In this case, once the freenect library is compiled, copy the libfreenect.so into *ROS/SSM_LinearArray/lib*. A precompiled libfreenect.so file under Ubuntu 14.04 is already included, so if it matches your version of OS, probably it's enough to go.
+[Freenect](https://github.com/OpenKinect/libfreenect) library is needed for live processing of kinect microphone array. In this case, once the freenect library is compiled, copy the libfreenect.so into *ROS/SSM_LinearArray/lib* folder. A precompiled libfreenect.so file under Ubuntu 14.04 is already included, so if it matches your version of OS, probably it's enough to go.
 
 ## PyAudio (optional)
-[Pyaudio](https://pypi.python.org/pypi/PyAudio) library is needed if live processing of PS3-Eye microphone array is needed. On Ubuntu, pyaudio can be installed by:
+[Pyaudio](https://pypi.python.org/pypi/PyAudio) library is needed for live processing of PS3-Eye microphone array. On Ubuntu, pyaudio can be installed by:
 ```
 sudo apt-get install python-pyaudio
 ```
@@ -109,7 +109,7 @@ rosbag play XXX.bag
 where XXX.bag is the recored rosbag file.
 
 ## Running with live data
-In the case of Kinect, the freenect firmware needed to be loaded to Kinect first. For details, have a look at instructions on audio data at [Freenect](https://github.com/OpenKinect/libfreenect) library. The firmware needed to loaded each time Kinect is reconnected to PC.
+In the case of Kinect, the freenect firmware needed to be loaded to Kinect first. For details, have a look at instructions related audio data at [Freenect](https://github.com/OpenKinect/libfreenect) library. The firmware needed to loaded each time Kinect is reconnected to PC.
 Then, run the following commands in terminal:
 ```
 roslaunch SSM_LinearArray freenect+ssmlineararray.launch 
