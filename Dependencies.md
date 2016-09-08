@@ -1,7 +1,7 @@
 ##List of Known Dependencies
 ###SSM_LinearArray version 1.0
 
-In this document we list all the pieces of code included by SSM_LinearArray and linked libraries which are not property of the authors.
+In this document we list all the pieces of code included by SSM\_LinearArray and linked libraries which are not property of the authors.
 
 
 #####Code in **src** and **include** folders
