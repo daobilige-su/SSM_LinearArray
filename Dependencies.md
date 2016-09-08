@@ -1,10 +1,14 @@
 ##List of Known Dependencies
-###ORB-SLAM2 version 1.0
+###SSM_LinearArray version 1.0
 
-In this document we list all the pieces of code included  by ORB-SLAM2 and linked libraries which are not property of the authors of ORB-SLAM2.
+In this document we list all the pieces of code included by SSM_LinearArray and linked libraries which are not property of the authors.
 
 
 #####Code in **src** and **include** folders
+
+* Converter.h, Frame.h, FrameDrawer.h, KeyFrame.h, LocalMapping.h, LoopClosing.h, Map.h, MapDrawer.h, MapPoint.h, Optimizer.h, System.h, Tracking.h, Viewer.h are modified copies of ORBSLAM2. Initializer.h, KeyFrameDatabase.h, ORBVocabulary.h, ORBmatcher.h, Sim3Solver.h are original files from ORBSLAM2. The original files are under GPL licence.
+
+* Converter.cc, Frame.cc, FrameDrawer.cc, KeyFrame.cc, LocalMapping.cc, LoopClosing.cc, Map.cc, MapDrawer.cc, MapPoint.cc, Optimizer.cc, System.cc, Tracking.cc, Viewer.cc are modified copies of ORBSLAM2. Initializer.cc, KeyFrameDatabase.cc, ORBmatcher.cc, Sim3Solver.cc are original files from ORBSLAM2. The original files are under GPL licence.
 
 * *ORBextractor.cc*.
 This is a modified version of orb.cpp of OpenCV library. The original code is BSD licensed.
@@ -25,6 +29,9 @@ This is a modified version of [DBoW2](https://github.com/dorian3d/DBoW2) and [DL
 * All code in **g2o** folder.
 This is a modified version of [g2o](https://github.com/RainerKuemmerle/g2o). All files included are BSD licensed.
 
+* All code in **libgp** folder.
+This is a modified version of [libgp](https://github.com/mblum/libgp). All files included are BSD licensed.
+
 #####Library dependencies 
 
 * **Pangolin (visualization and user interface)**.
@@ -42,9 +49,9 @@ For versions greater than 3.1.1 is MPL2, earlier versions are LGPLv3.
 * **LAPACK**(required by g2o).
 BSD licensed. 
 
-* **ROS (Optional, only if you build Examples/ROS)**.
+* **ROS**.
 BSD licensed. In the manifest.xml the only declared package dependencies are roscpp, tf, sensor_msgs, image_transport, cv_bridge, which are all BSD licensed.
 
 
 
-Updated: 23/01/2016 Raúl Mur Artal
+Updated: 08/09/2016 Daobilige Su
