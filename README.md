@@ -96,7 +96,7 @@ In the case of Kinect, run the following commands in terminal:
 ```
 roslaunch SSM_LinearArray freenectrosbag+ssmlineararray.launch 
 ```
-An example of mapping 2 sound sources using Kinect can be found [here](https://mega.nz/#!LpQHQAKY!ieHMVTvn84osptAr9ib6di18QmPL1oZ0KKhQdE_CNZg).
+An example (recorded rosbag file) of mapping 2 sound sources using Kinect can be found [here](https://mega.nz/#!LpQHQAKY!ieHMVTvn84osptAr9ib6di18QmPL1oZ0KKhQdE_CNZg)(1GB).
 
 In the case of PS3-Eye, run the following commands in terminal:
 ```
