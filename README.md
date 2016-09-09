@@ -96,7 +96,6 @@ In the case of Kinect, run the following commands in terminal:
 ```
 roslaunch SSM_LinearArray freenectrosbag+ssmlineararray.launch 
 ```
-An example (recorded rosbag file) of mapping 2 sound sources using Kinect can be found [here](https://mega.nz/#!LpQHQAKY!ieHMVTvn84osptAr9ib6di18QmPL1oZ0KKhQdE_CNZg)(1GB).
 
 In the case of PS3-Eye, run the following commands in terminal:
 ```
@@ -108,6 +107,7 @@ Open another terminal, go to the folder containing recorded rosbag files and pla
 rosbag play XXX.bag
 ```
 where XXX.bag is the recored rosbag file.
+An example (recorded rosbag file) of mapping 2 sound sources using Kinect can be found [here](https://mega.nz/#!LpQHQAKY!ieHMVTvn84osptAr9ib6di18QmPL1oZ0KKhQdE_CNZg)(1GB).
 
 ## Running with live data
 In the case of Kinect, the freenect firmware needed to be loaded to Kinect first. For details, have a look at instructions related audio data at [Freenect](https://github.com/OpenKinect/libfreenect) library. The firmware needed to loaded each time Kinect is reconnected to PC.
