@@ -107,6 +107,7 @@ Open another terminal, go to the folder containing recorded rosbag files and pla
 rosbag play XXX.bag
 ```
 where XXX.bag is the recored rosbag file.
+
 An example (recorded rosbag file) of mapping 2 sound sources using Kinect can be found [here](https://mega.nz/#!LpQHQAKY!ieHMVTvn84osptAr9ib6di18QmPL1oZ0KKhQdE_CNZg)(1GB).
 
 ## Running with live data
