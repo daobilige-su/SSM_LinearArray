@@ -5,6 +5,10 @@
 
 SSM\_LinearArray is a real-time SLAM library for sound sources mapping using an off-shelf robotic perception device (e.g. Kinect or PS3-Eye), which have a linear microphone array embedded inside. SSM\_LinearArray reads raw image (Mono/RGB-D), audio data and computes the camera trajectory, sound sources locations and a dense/sparse 3D reconstruction when a Kinect (**RGB-D** Camera) / PS3-Eye (**Monocular** Camera) is used.
 
+#####Videos showing ORB-SLAM2:
+<a href="https://youtu.be/Ry_i3kmvlHM" target="_blank"><img src="https://youtu.be/Ry_i3kmvlHM/0.jpg" 
+alt="SSM_LinearArray Youtube Video" width="640" height="480" border="10" /></a>
+
 <!--
 #####Videos showing ORB-SLAM2:
 <a href="http://www.youtube.com/watch?feature=player_embedded&v=dF7_I2Lin54
@@ -13,6 +17,7 @@ alt="DataArena DataSet" width="240" height="180" border="10" /></a>
 
 
 ###Related Publications:
+
 -->
 
 #1. License
