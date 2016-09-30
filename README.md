@@ -1,9 +1,4 @@
 # SSM\_LinearArray
-**Authors:** [Daobilige Su](https://sites.google.com/site/daobiligesu/home)
-
-**Current version:** 1.0.0 
-
-SSM\_LinearArray is a real-time SLAM library for sound sources mapping using an off-shelf robotic perception device (e.g. Kinect or PS3-Eye), which have a linear microphone array embedded inside. SSM\_LinearArray reads raw image (Mono/RGB-D), audio data and computes the camera trajectory, sound sources locations and a dense/sparse 3D reconstruction when a Kinect (**RGB-D** Camera) / PS3-Eye (**Monocular** Camera) is used.
 
 ##Video showing SSM\_LinearArray :
 
@@ -11,6 +6,12 @@ SSM\_LinearArray is a real-time SLAM library for sound sources mapping using an 
 
 <a href="https://youtu.be/Ry_i3kmvlHM" target="_blank"><img src="https://img.youtube.com/vi/Ry_i3kmvlHM/0.jpg" 
 alt="SSM_LinearArray Youtube Video" width="480" height="320" border="10" /></a>
+
+**Authors:** [Daobilige Su](https://sites.google.com/site/daobiligesu/home)
+
+**Current version:** 1.0.0 
+
+SSM\_LinearArray is a real-time SLAM library for sound sources mapping using an off-shelf robotic perception device (e.g. Kinect or PS3-Eye), which have a linear microphone array embedded inside. SSM\_LinearArray reads raw image (Mono/RGB-D), audio data and computes the camera trajectory, sound sources locations and a dense/sparse 3D reconstruction when a Kinect (**RGB-D** Camera) / PS3-Eye (**Monocular** Camera) is used.
 
 <!--
 #####Videos showing ORB-SLAM2:
@@ -116,7 +117,15 @@ rosbag play XXX.bag
 ```
 where XXX.bag is the recored rosbag file.
 
+## Pre-recorded Data
+
 An example (recorded rosbag file) of mapping 2 sound sources using Kinect can be found [here](https://mega.nz/#!LpQHQAKY!ieHMVTvn84osptAr9ib6di18QmPL1oZ0KKhQdE_CNZg)(1GB).
+
+An example (recorded rosbag file) of mapping 5 sound sources in a computer lab using Kinect can be found [here](https://mega.nz/#!y4IUxQCB!thKCMAWGZkldkY6_69L17JrLqe6m_KGRecLCtEbWV2o) (3.36GB)
+
+An example (recorded rosbag file) of mapping 2 sound sources using PS3-Eye can be found [here](https://mega.nz/#!ylZBDarA!3UDHWc7NuGv22Y-9N9evUUQaYrJezrZISFW1Op72M2M) (2.87GB).
+
+If you find the system is running a bit slow, decompress the rosbag files above first.
 
 ## Running with live data
 In the case of Kinect, the freenect firmware needed to be loaded to Kinect first. For details, have a look at instructions related audio data at [Freenect](https://github.com/OpenKinect/libfreenect) library. The firmware needed to loaded each time Kinect is reconnected to PC.
